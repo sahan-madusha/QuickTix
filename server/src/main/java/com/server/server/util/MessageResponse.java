@@ -2,19 +2,32 @@ package com.server.server.util;
 
 public class MessageResponse {
     private String message;
+    private String token;
 
     // Constructor
     public MessageResponse(String message) {
         this.message = message;
     }
 
-    // Getter
+    public MessageResponse(String message , String token) {
+        this.message = message;
+        this.token = token;
+    }
+
     public String getMessage() {
         return message;
     }
 
-    // Setter
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
 }
