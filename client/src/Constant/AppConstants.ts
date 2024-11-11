@@ -1,0 +1,18 @@
+import config from "./config";
+
+export const WEBNAME = config.webName;
+export const FACEBOOK = config.facebook;
+export const INSTERGRAM = config.instergram;
+export const ADDRESS = config.address;
+export const EMAIL = config.email;
+export const WHATSAPP = config.whatsapp;
+export const WEB_LINK = config.webLink;
+export const SERVER_LINK = config.server;
+export const IMAGE_URL = config.imagepath;
+export const NO_IMAGE = config.noImage;
+export const SERVER_API = config.serverapi;
+
+//web route
+export const REGISTERURL = config.registerUrl;
+export const BOOKINGURL = config.bookingUrl;
+export const HOMEPAGEURL = config.homepageurl;
