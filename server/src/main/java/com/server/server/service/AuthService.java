@@ -45,11 +45,12 @@ public class AuthService {
     }
 
 
-    public String loginUser(LoginDto loginDto) {
+    public Boolean loginUser(LoginDto loginDto) {
         Optional<User> user = userRepository.findByUsername(loginDto.getUsername());
-        if(user.isPresent() && passwordEncoder.matches(loginDto.getPassword(), user.get().getPassword())) {
-            return "loging success";
+        if (user.isPresent() && passwordEncoder.matches(loginDto.getPassword(), user.get().getPassword())) {
+            return true;
+        }else {
+            return false;
         }
-        throw new RuntimeException("Invalid credentials");
     }
 }
