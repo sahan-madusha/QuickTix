@@ -20,12 +20,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())  // Disable CSRF protection for testing purposes
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/signup", "/api/auth/signin").permitAll()  // Allow public access to signup and signin
-                        .anyRequest().authenticated()  // Require authentication for all other endpoints
+                        // Permit all requests to Swagger UI and API documentation paths
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+                        // Permit signup and signin endpoints
+                        .requestMatchers("/api/auth/signup", "/api/auth/signin").permitAll()
+                        // All other endpoints require authentication
+                        .anyRequest().authenticated()
                 );
-
         return http.build();
     }
 }
