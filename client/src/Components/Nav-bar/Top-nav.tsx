@@ -1,5 +1,6 @@
 import { scrollToTop } from "../../Lib/Utils";
 import {
+  AUTHPAGE,
   EMAIL,
   FACEBOOK,
   HOMEPAGEURL,
@@ -83,7 +84,7 @@ export const TopNav = () => {
 
             <div>
               <Link
-                to={""}
+                to={AUTHPAGE}
                 onClick={scrollToTop}
                 className="flex items-center font-bold"
               >
