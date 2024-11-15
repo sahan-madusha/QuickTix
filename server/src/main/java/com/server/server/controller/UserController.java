@@ -10,6 +10,8 @@ import com.server.server.service.AuthService;
 import com.server.server.util.JwtResponse;
 import com.server.server.util.JwtUtils;
 import com.server.server.util.MessageResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "Endpoints for user authentication")
+
 public class UserController {
     private final AuthService authService;
     private final JwtUtils jwtUtils;
@@ -32,6 +36,7 @@ public class UserController {
     }
 
     // Sign UP: Authenticate the user and return JWT token
+    @Operation(summary = "Sign up a new user")
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody RegisterDto registerRequest) {
         try {
@@ -48,6 +53,7 @@ public class UserController {
     }
 
     // Sign IN: Authenticate the user and return JWT token
+    @Operation(summary = "Sign in an existing user")
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody LoginDto loginRequest) {
         try {
