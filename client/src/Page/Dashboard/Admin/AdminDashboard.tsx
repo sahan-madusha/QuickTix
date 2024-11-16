@@ -26,6 +26,13 @@ export const AdminDashboard = () => {
     timeRange: [],
   });
 
+  const stats = [
+    { title: "Total Tickets", value: 1500, bgColor: "bg-blue-500" },
+    { title: "Vendors", value: 45, bgColor: "bg-green-500" },
+    { title: "Customers", value: 1200, bgColor: "bg-yellow-500" },
+    { title: "Events", value: 30, bgColor: "bg-purple-500" },
+  ];
+
   const handleVendorSubmit = () => {
     setVendorLimitations([
       ...vendorLimitations,
@@ -33,7 +40,6 @@ export const AdminDashboard = () => {
         ...currentLimit,
       },
     ]);
-    console.log("Vendor Limitation Saved:", currentLimit);
   };
 
   const handleCustomerSubmit = () => {
@@ -43,14 +49,11 @@ export const AdminDashboard = () => {
         ...currentLimit,
       },
     ]);
-    console.log("Customer Limitation Saved:", currentLimit);
   };
 
   return (
-    <div
-      className="admin-panel-container"
-    >
-      <Tabs defaultActiveKey="1">
+    <div className="flex container flex-row justify-center items-start w-full">
+      <Tabs defaultActiveKey="1" className="w-1/2">
         {/* Vendor Limitation Management */}
         <TabPane tab="Manage Vendor Limitations" key="1">
           <Card
@@ -105,21 +108,6 @@ export const AdminDashboard = () => {
               </Form.Item>
             </Form>
           </Card>
-
-          <Divider>Existing Vendor Limitations</Divider>
-          <Row gutter={[16, 16]}>
-            {vendorLimitations.map((limitation, index) => (
-              <Col span={8} key={index}>
-                <Card title={`Limitation ${index + 1}`} bordered>
-                  <p>Type: {limitation.rangeType}</p>
-                  {limitation.rangeType === "hour" && (
-                    <p>Time Range: {limitation.timeRange.join(" - ")}</p>
-                  )}
-                  <p>Max Tickets: {limitation.maxTickets}</p>
-                </Card>
-              </Col>
-            ))}
-          </Row>
         </TabPane>
 
         {/* Customer Limitation Management */}
@@ -176,23 +164,51 @@ export const AdminDashboard = () => {
               </Form.Item>
             </Form>
           </Card>
-
-          <Divider>Existing Customer Limitations</Divider>
-          <Row gutter={[16, 16]}>
-            {customerLimitations.map((limitation, index) => (
-              <Col span={8} key={index}>
-                <Card title={`Limitation ${index + 1}`} bordered>
-                  <p>Type: {limitation.rangeType}</p>
-                  {limitation.rangeType === "hour" && (
-                    <p>Time Range: {limitation.timeRange.join(" - ")}</p>
-                  )}
-                  <p>Max Tickets: {limitation.maxTickets}</p>
-                </Card>
-              </Col>
-            ))}
-          </Row>
         </TabPane>
       </Tabs>
+
+      <div className="w-1/2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {stats.map((stat, index) => (
+            <div
+              key={index}
+              className={`rounded-lg shadow-md p-6 text-white ${stat.bgColor}`}
+            >
+              <h2 className="text-lg font-semibold">{stat.title}</h2>
+              <p className="text-3xl font-bold mt-2">{stat.value}</p>
+            </div>
+          ))}
+        </div>
+        <Row gutter={[16, 16]}>
+          {customerLimitations.slice(-3).map((limitation, index) => (
+            <Col span={8} key={index}>
+              <Card title={`Limitation ${index + 1}`} bordered>
+                <p>Type: {limitation.rangeType}</p>
+                {limitation.rangeType === "hour" && (
+                  <p>Time Range: {limitation.timeRange.join(" - ")}</p>
+                )}
+                <p>Max Tickets: {limitation.maxTickets}</p>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+        <Row gutter={[16, 16]}>
+          {vendorLimitations.slice(-3).map((limitation, index) => (
+            <Col span={8} key={index}>
+              <Card
+                title={`Limitation ${vendorLimitations.length - 3 + index + 1}`}
+                bordered
+              >
+                <p>Type: {limitation.rangeType}</p>
+                {limitation.rangeType === "hour" && (
+                  <p>Time Range: {limitation.timeRange.join(" - ")}</p>
+                )}
+                <p>Max Tickets: {limitation.maxTickets}</p>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
     </div>
   );
 };
