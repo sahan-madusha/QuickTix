@@ -1,16 +1,40 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Select } from "antd";
+import { signIn } from "../../Api/index";
+import { toast } from "react-toastify";
+import { useAuthContext } from "../../Context";
+import { useNavigate } from "react-router-dom";
+import { LOGINSUCCESS } from "../../Constant";
 
 const { Option } = Select;
 
 export const AuthPage = () => {
-  const [form] = Form.useForm();
+  const [signInForm] = Form.useForm();
+  const [regForm] = Form.useForm();
+  const [isSignInBtnLoading, setIsSignInBtnLoading] = useState<boolean>(false);
+  const { login } = useAuthContext();
+  const navigate = useNavigate();
 
-  const handleSubmit = (values: any) => {
+  const handleRegSubmit = async (values: any) => {
     if (values.password === values.repassword) {
-      console.log("Form Data Submitted: ", values);
+      regForm.resetFields();
     } else {
-      console.error("Passwords do not match");
+      toast.warning("Passwords do not match");
+    }
+  };
+
+  const handleSignInSubmit = async (values: any) => {
+    setIsSignInBtnLoading(true);
+    try {
+      const response = await signIn(values);
+      if (response?.token) {
+        login(response.data?.token);
+        navigate(`../${LOGINSUCCESS}`);
+        
+      }
+      toast.success(response?.message);
+    } finally {
+      setIsSignInBtnLoading(false);
     }
   };
 
@@ -24,20 +48,48 @@ export const AuthPage = () => {
           ticket sales and explore new opportunities.
         </p>
         <div className="w-full max-w-sm">
-          <Input placeholder="Username" className="mb-4 p-2" size="large" />
-          <Input.Password
-            placeholder="Password"
-            className="mb-6 p-2"
-            size="large"
-          />
-          <Button
-            type="primary"
-            size="large"
-            className="w-full"
-            onClick={() => {}}
+          <Form
+            layout="vertical"
+            className="w-full max-w-md"
+            form={signInForm}
+            onFinish={handleSignInSubmit}
           >
-            Login
-          </Button>
+            <Form.Item
+              label="Username"
+              name="username"
+              rules={[
+                { required: true, message: "Please enter your username" },
+              ]}
+              className="my-2"
+            >
+              <Input placeholder="Enter your username" />
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                { required: true, message: "Please enter your password" },
+                {
+                  min: 6,
+                  message: "Password must be at least 6 characters long",
+                },
+              ]}
+              className="my-1"
+            >
+              <Input.Password placeholder="Enter your password" />
+            </Form.Item>
+            <Form.Item className="mt-5">
+              <Button
+                type="primary"
+                size="large"
+                loading={isSignInBtnLoading}
+                block
+                htmlType="submit"
+              >
+                SignIn
+              </Button>
+            </Form.Item>
+          </Form>
         </div>
       </div>
 
@@ -47,8 +99,8 @@ export const AuthPage = () => {
         <Form
           layout="vertical"
           className="w-full max-w-md"
-          form={form}
-          onFinish={handleSubmit}
+          form={regForm}
+          onFinish={handleRegSubmit}
         >
           <div className="flex justify-between gap-0 w-full">
             <Form.Item
@@ -129,7 +181,7 @@ export const AuthPage = () => {
           >
             <Input.Password placeholder="Re-Enter your password" />
           </Form.Item>
-          <Form.Item>
+          <Form.Item className="mt-5">
             <Button type="primary" size="large" block htmlType="submit">
               Register
             </Button>

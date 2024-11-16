@@ -15,3 +15,5 @@ export const SERVER_API = config.serverapi;
 //web route
 export const HOMEPAGEURL = config.homepageurl;
 export const AUTHPAGE = config.authpage
+export const LOGINSUCCESS = config.loginsuccess
+export const DASHBOARD = config.dashboard
