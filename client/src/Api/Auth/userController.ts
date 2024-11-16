@@ -18,3 +18,20 @@ export const signIn = async (data: { username: string; password: string }) => {
     toast.error(errorMessage);
   }
 };
+
+export const signUp = async (data:any) => {
+  try {
+    const response = await axios.post(`${SERVER_API}/auth/signup`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data?.message ||
+      "Something went wrong. Please try again.";
+    toast.error(errorMessage);
+  }
+};

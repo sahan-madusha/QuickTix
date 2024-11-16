@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Select } from "antd";
-import { signIn } from "../../Api/index";
+import { signIn , signUp } from "../../Api/index";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../Context";
 import { useNavigate } from "react-router-dom";
-import { LOGINSUCCESS } from "../../Constant";
+import { LOGINSUCCESS, UserRolesEnum } from "../../Constant";
 
 const { Option } = Select;
 
@@ -12,12 +12,33 @@ export const AuthPage = () => {
   const [signInForm] = Form.useForm();
   const [regForm] = Form.useForm();
   const [isSignInBtnLoading, setIsSignInBtnLoading] = useState<boolean>(false);
+  const [isSignUpBtnLoading, setIsSignUpBtnLoading] = useState<boolean>(false);
   const { login } = useAuthContext();
   const navigate = useNavigate();
 
   const handleRegSubmit = async (values: any) => {
+    console.log("value ::::::",values);
+    console.log("data::::::",{
+      "username": "aaaaa",
+      "password": "straaaaing",
+      "email": "aaaaaaaaaa",
+      "role": "CUSTOMER",
+      "firstname": "aaaaaa"
+    });
+    
+    
     if (values.password === values.repassword) {
-      regForm.resetFields();
+      setIsSignUpBtnLoading(true);
+      try {
+        const response = await signUp(values);
+        if (response?.token) {
+          login(response?.token);
+          navigate(`../${LOGINSUCCESS}`);
+        }
+        toast.success(response?.message);
+      } finally {
+        setIsSignUpBtnLoading(false);
+      }
     } else {
       toast.warning("Passwords do not match");
     }
@@ -30,7 +51,6 @@ export const AuthPage = () => {
       if (response?.token) {
         login(response?.token);
         navigate(`../${LOGINSUCCESS}`);
-        
       }
       toast.success(response?.message);
     } finally {
@@ -143,8 +163,8 @@ export const AuthPage = () => {
               className="my-1 w-1/2"
             >
               <Select placeholder="Select a role">
-                <Option value="vendor">Vendor</Option>
-                <Option value="customer">Customer</Option>
+                <Option value={UserRolesEnum.vendor}>Vendor</Option>
+                <Option value={UserRolesEnum.customer}>Customer</Option>
               </Select>
             </Form.Item>
           </div>
@@ -182,7 +202,13 @@ export const AuthPage = () => {
             <Input.Password placeholder="Re-Enter your password" />
           </Form.Item>
           <Form.Item className="mt-5">
-            <Button type="primary" size="large" block htmlType="submit">
+            <Button
+              type="primary"
+              size="large"
+              block
+              htmlType="submit"
+              loading={isSignUpBtnLoading}
+            >
               Register
             </Button>
           </Form.Item>
