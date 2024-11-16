@@ -23,7 +23,7 @@ export const Footer = () => {
           <div className="md:w-1/2 mb-8 md:mb-0">
             <div className="mb-4" data-aos="fade-down" data-aos-delay="400">
               <img
-                src={`${IMAGE_URL}/logo-transparent.png`}
+                src={`${IMAGE_URL}/quicktix.png`}
                 alt="Logo"
                 className="w-32 mx-auto md:mx-0"
               />

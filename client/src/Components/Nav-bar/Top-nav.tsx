@@ -1,6 +1,7 @@
 import { scrollToTop } from "../../Lib/Utils";
 import {
   AUTHPAGE,
+  DASHBOARD,
   EMAIL,
   FACEBOOK,
   HOMEPAGEURL,
@@ -51,7 +52,7 @@ export const TopNav = () => {
                 <Tooltip placement="bottom" title={"Home Page"}>
                   <Link to={HOMEPAGEURL}>
                     <Avatar
-                      src={`${IMAGE_URL}/logo.jpg`}
+                      src={`${IMAGE_URL}/quicktix.png`}
                       size={35}
                       className="hover:cursor-pointer"
                     />
@@ -88,7 +89,14 @@ export const TopNav = () => {
 
             {isAuthenticated ? (
               <div className="flex flex-row justify-center items-center">
-                <p className="my-0 py-0 me-5 font-500">Hi {user?.username}</p>
+                <p
+                  className="my-0 py-0 me-5 font-500 cursor-pointer"
+                  onClick={() => {
+                    navigate(DASHBOARD);
+                  }}
+                >
+                  Hi {user?.username}
+                </p>
                 <Button
                   onClick={() => {
                     logout();
