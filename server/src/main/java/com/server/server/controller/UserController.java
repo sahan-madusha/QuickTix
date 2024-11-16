@@ -7,7 +7,6 @@ import com.server.server.exception.JwtTokenException;
 import com.server.server.exception.UserAlreadyExistsException;
 import com.server.server.repository.UserRepository;
 import com.server.server.service.AuthService;
-import com.server.server.util.JwtResponse;
 import com.server.server.util.JwtUtils;
 import com.server.server.util.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Authentication", description = "Endpoints for user authentication")
+@Tag(name = "Auth", description = "Endpoints for user authentication")
 
 public class UserController {
     private final AuthService authService;
