@@ -13,6 +13,7 @@ export const NO_IMAGE = config.noImage;
 export const SERVER_API = config.serverapi;
 
 //web route
-export const REGISTERURL = config.registerUrl;
-export const BOOKINGURL = config.bookingUrl;
 export const HOMEPAGEURL = config.homepageurl;
+export const AUTHPAGE = config.authpage
+export const LOGINSUCCESS = config.loginsuccess
+export const DASHBOARD = config.dashboard

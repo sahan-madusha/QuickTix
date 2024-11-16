@@ -26,8 +26,8 @@ const environments = {
   development: {
     webLink: "http://localhost:3000",
     server: "http://localhost/app/newtrainedguide/trained-guide/server",
-    serverapi: "http://localhost/app/newtrainedguide/trained-guide/server/Api",
-    imagepath: `http://localhost/app/newtrainedguide/trained-guide/image`,
+    serverapi: "http://localhost:8080/api",
+    imagepath: `http://localhost/image`,
   },
   qa: {
     webLink: `${baseDomainQa}`,
@@ -50,6 +50,9 @@ const config = {
 
   // Web routes
   homepageurl: "/",
+  authpage:'Auth',
+  loginsuccess:'login-success',
+  dashboard:'dashboard',
 };
 
 export default config;

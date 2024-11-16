@@ -1,5 +1,7 @@
 import { scrollToTop } from "../../Lib/Utils";
 import {
+  AUTHPAGE,
+  DASHBOARD,
   EMAIL,
   FACEBOOK,
   HOMEPAGEURL,
@@ -12,12 +14,16 @@ import {
   InstagramFilled,
   WhatsAppOutlined,
 } from "@ant-design/icons";
-import { Avatar, Tooltip } from "antd";
+import { Avatar, Button, Tooltip } from "antd";
 import { AtSign, LogIn } from "lucide-react";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../Context";
 
 export const TopNav = () => {
+  const { isAuthenticated, user, logout } = useAuthContext();
+  const navigate = useNavigate();
+
   const SocialMeadia = () => {
     return (
       <>
@@ -46,7 +52,7 @@ export const TopNav = () => {
                 <Tooltip placement="bottom" title={"Home Page"}>
                   <Link to={HOMEPAGEURL}>
                     <Avatar
-                      src={`${IMAGE_URL}/logo.jpg`}
+                      src={`${IMAGE_URL}/quicktix.png`}
                       size={35}
                       className="hover:cursor-pointer"
                     />
@@ -81,15 +87,37 @@ export const TopNav = () => {
               <SocialMeadia />
             </div>
 
-            <div>
-              <Link
-                to={""}
-                onClick={scrollToTop}
-                className="flex items-center font-bold"
-              >
-                Sign In <LogIn className="mx-1" />
-              </Link>
-            </div>
+            {isAuthenticated ? (
+              <div className="flex flex-row justify-center items-center">
+                <p
+                  className="my-0 py-0 me-5 font-500 cursor-pointer"
+                  onClick={() => {
+                    navigate(DASHBOARD);
+                  }}
+                >
+                  Hi {user?.username}
+                </p>
+                <Button
+                  onClick={() => {
+                    logout();
+                    navigate(HOMEPAGEURL);
+                  }}
+                  danger
+                >
+                  <LogIn className="px-0 mx-0 text-red" />
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Link
+                  to={AUTHPAGE}
+                  onClick={scrollToTop}
+                  className="flex items-center font-bold"
+                >
+                  Sign In <LogIn className="mx-1" />
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
