@@ -33,6 +33,8 @@ public class JwtUtils {
 
             return Jwts.builder()
                     .setSubject(user.getUsername())
+                    .claim("email", user.getEmail())
+                    .claim("userRole", user.getRole().name())
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                     .signWith(key)
