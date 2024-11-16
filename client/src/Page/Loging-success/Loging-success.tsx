@@ -8,8 +8,6 @@ export const Loginsuccess = () => {
   const { isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
 
-  console.log(isAuthenticated);
-
   useEffect(() => {
     if (isAuthenticated) {
       navigate(`../${DASHBOARD}`);

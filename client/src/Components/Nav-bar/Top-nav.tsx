@@ -1,7 +1,6 @@
 import { scrollToTop } from "../../Lib/Utils";
 import {
   AUTHPAGE,
-  DASHBOARD,
   EMAIL,
   FACEBOOK,
   HOMEPAGEURL,
@@ -89,15 +88,15 @@ export const TopNav = () => {
 
             {isAuthenticated ? (
               <div className="flex flex-row justify-center items-center">
-                <p className="my-0 py-0 me-5">Hi {user?.username}</p>
+                <p className="my-0 py-0 me-5 font-500">Hi {user?.username}</p>
                 <Button
                   onClick={() => {
                     logout();
                     navigate(HOMEPAGEURL);
                   }}
-                  ghost
+                  danger
                 >
-                  <LogIn className="mx-1 text-black" />
+                  <LogIn className="px-0 mx-0 text-red" />
                 </Button>
               </div>
             ) : (

@@ -17,16 +17,7 @@ export const AuthPage = () => {
   const navigate = useNavigate();
 
   const handleRegSubmit = async (values: any) => {
-    console.log("value ::::::",values);
-    console.log("data::::::",{
-      "username": "aaaaa",
-      "password": "straaaaing",
-      "email": "aaaaaaaaaa",
-      "role": "CUSTOMER",
-      "firstname": "aaaaaa"
-    });
-    
-    
+
     if (values.password === values.repassword) {
       setIsSignUpBtnLoading(true);
       try {

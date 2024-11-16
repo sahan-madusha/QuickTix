@@ -81,6 +81,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
     }
   }, [authToken]);
+  
 
   return (
     <AuthContext.Provider
