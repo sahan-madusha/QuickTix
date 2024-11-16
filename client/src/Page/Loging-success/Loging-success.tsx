@@ -8,15 +8,14 @@ export const Loginsuccess = () => {
   const { isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
 
+  console.log(isAuthenticated);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (isAuthenticated) {
-        navigate(`../${DASHBOARD}`);
-        return () => clearTimeout(timer);
-      } else {
-        navigate(`../${AUTHPAGE}`);
-      }
-    }, 1500);
+    if (isAuthenticated) {
+      navigate(`../${DASHBOARD}`);
+    } else {
+      navigate(`../${AUTHPAGE}`);
+    }
   }, [isAuthenticated, navigate]);
 
   return (

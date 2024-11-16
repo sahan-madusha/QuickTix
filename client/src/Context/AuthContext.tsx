@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface User {
   username: string;
@@ -26,16 +26,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     email: "",
     userRole: "",
   });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const decodeToken = (token: string) => {
+    if (typeof token !== 'string' || !token.trim()) {
+      console.error("Invalid token provided");
+      return;
+    }
+  
     try {
       const decoded = jwtDecode<{
-        username: string;
+        sub: string;
         email: string;
         userRole: string;
       }>(token);
       setUser({
-        username: decoded.username || "",
+        username: decoded.sub || "",
         email: decoded.email || "",
         userRole: decoded.userRole || "",
       });
@@ -48,11 +54,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     }
   };
-
+  
   const login = (token: string) => {
-    setAuthToken(token);
     localStorage.setItem("authToken", token);
+    setAuthToken(token);
     decodeToken(token);
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
@@ -63,13 +70,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       email: "",
       userRole: "",
     });
+    setIsAuthenticated(false);
   };
-
-  const isAuthenticated = !!authToken;
 
   useEffect(() => {
     if (authToken) {
       decodeToken(authToken);
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
     }
   }, [authToken]);
 

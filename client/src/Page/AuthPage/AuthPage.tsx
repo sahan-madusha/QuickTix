@@ -28,7 +28,7 @@ export const AuthPage = () => {
     try {
       const response = await signIn(values);
       if (response?.token) {
-        login(response.data?.token);
+        login(response?.token);
         navigate(`../${LOGINSUCCESS}`);
         
       }
