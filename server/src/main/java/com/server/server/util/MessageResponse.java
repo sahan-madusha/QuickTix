@@ -5,6 +5,9 @@ public class MessageResponse {
     private String token;
 
     // Constructor
+    public MessageResponse() {
+
+    }
     public MessageResponse(String message) {
         this.message = message;
     }

@@ -18,11 +18,12 @@ public class Config {
     @Column(name = "customer_limitation", nullable = true)
     private Integer customerLimitation;
 
-    @Column(name = "type", length = 45, nullable = true)
+    @Column(name = "type", nullable = true)
+    @Enumerated(EnumType.STRING)
     private TicketLimitationType type;
 
     @Column(name = "lastupdate", nullable = true)
-    private LocalDateTime lastupdate;
+    private LocalDateTime lastUpdate;
 
     public Config() {
     }
@@ -32,7 +33,7 @@ public class Config {
         this.vendorLimitation = vendor_limitation;
         this.customerLimitation = customerLimitation;
         this.type = type;
-        this.lastupdate = lastupdate;
+        this.lastUpdate = lastupdate;
     }
 
     public int getId() {return id;}
@@ -47,6 +48,6 @@ public class Config {
     public TicketLimitationType getType() {return type;}
     public void setType(TicketLimitationType type) {this.type = type;}
 
-    public LocalDateTime getLastupdate() {return lastupdate;}
-    public void setLastupdate(LocalDateTime lastupdate) {this.lastupdate = lastupdate;}
+    public LocalDateTime getLastUpdate() {return lastUpdate;}
+    public void setLastUpdate(LocalDateTime lastUpdate) {this.lastUpdate = lastUpdate;}
 }

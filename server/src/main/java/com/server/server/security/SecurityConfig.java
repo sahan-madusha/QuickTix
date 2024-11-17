@@ -28,9 +28,11 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        // Permit signup and signin endpoints
-                        .requestMatchers("/api/auth/signup", "/api/auth/signin").permitAll()
-                        // All other endpoints require authentication
+                        .requestMatchers(
+                                "/api/auth/signup",
+                                "/api/auth/signin",
+                                "/api/config/update",
+                                "/api/config/{id}").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
