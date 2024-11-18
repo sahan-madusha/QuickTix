@@ -44,7 +44,7 @@ export const AdminDashboard = () => {
     <div className="flex container flex-row justify-center items-start w-full mt-10">
       <Tabs defaultActiveKey="1" className="w-1/2">
         {/* Limitation Management */}
-        <TabPane tab="Manage Vendor Limitations" key="1">
+        <TabPane tab="Manage Limitations" key="1">
           <Card style={{ marginBottom: "20px" }}>
             <Form layout="vertical" onFinish={handleVendorSubmit}>
               <Form.Item
