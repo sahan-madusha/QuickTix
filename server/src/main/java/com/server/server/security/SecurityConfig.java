@@ -32,7 +32,8 @@ public class SecurityConfig {
                                 "/api/auth/signup",
                                 "/api/auth/signin",
                                 "/api/config/update",
-                                "/api/config/{id}").permitAll()
+                                "/api/config/{id}",
+                                "/ws/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

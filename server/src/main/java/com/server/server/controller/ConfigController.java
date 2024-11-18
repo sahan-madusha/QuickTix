@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -17,8 +18,13 @@ import java.time.LocalDateTime;
 @Tag(name = "Config", description = "Endpoints for app config")
 public class ConfigController {
 
-    @Autowired
-    private ConfigService configService;
+    private final ConfigService configService;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public ConfigController(ConfigService configService, SimpMessagingTemplate messagingTemplate) {
+        this.configService = configService;
+        this.messagingTemplate = messagingTemplate;
+    }
 
     //UPDATE : Update the app config
     @PostMapping("/update")
@@ -34,11 +40,11 @@ public class ConfigController {
             existingConfig.setLastUpdate(LocalDateTime.now());
 
             Config updatedConfig = configService.updateConfig(existingConfig);
+            messagingTemplate.convertAndSend("/topic/configUpdates", updatedConfig);
             return ResponseEntity.ok(updatedConfig);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
-
     }
 
     //Fetch a data using id
