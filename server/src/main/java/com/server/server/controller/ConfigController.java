@@ -41,7 +41,7 @@ public class ConfigController {
 
             Config updatedConfig = configService.updateConfig(existingConfig);
             messagingTemplate.convertAndSend("/topic/configUpdates", updatedConfig);
-            return ResponseEntity.ok(updatedConfig);
+            return ResponseEntity.ok(new MessageResponse( "Config successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
@@ -57,6 +57,5 @@ public class ConfigController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
-
     }
 }
