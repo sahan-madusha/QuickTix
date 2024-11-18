@@ -1,10 +1,21 @@
 import { jwtDecode } from "jwt-decode";
 import React, { createContext, useContext, useEffect, useState } from "react";
-
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
+import { WEB_SOCKET_URL } from "../Constant";
+import { fetchConfigData } from "../Api";
 interface User {
   username: string;
   email: string;
   userRole: string;
+}
+
+interface Config {
+  id: number;
+  vendorLimitation: number;
+  customerLimitation: number;
+  type: string;
+  lastUpdate: string;
 }
 
 interface AuthContextType {
@@ -13,6 +24,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   user: User;
+  limitations: Config;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -27,13 +39,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     userRole: "",
   });
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [limitations, setLimitations] = useState<Config>();
 
   const decodeToken = (token: string) => {
-    if (typeof token !== 'string' || !token.trim()) {
+    if (typeof token !== "string" || !token.trim()) {
       console.error("Invalid token provided");
       return;
     }
-  
+
     try {
       const decoded = jwtDecode<{
         sub: string;
@@ -54,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     }
   };
-  
+
   const login = (token: string) => {
     localStorage.setItem("authToken", token);
     setAuthToken(token);
@@ -81,7 +94,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
     }
   }, [authToken]);
-  
+
+
+  const fetchConfData = async()=>{
+    const configdata = await fetchConfigData(1);
+    setLimitations(configdata)
+  }
+
+  useEffect(() => {
+
+    fetchConfData();
+
+    const client = new Client({
+      webSocketFactory: () => new SockJS(WEB_SOCKET_URL),
+      onConnect: () => {
+        client.subscribe("/topic/configUpdates", (message) => {
+          const updatedConfig = JSON.parse(message.body);
+          setLimitations(updatedConfig);
+        });
+      },
+      debug: (str) => {
+        console.log(str);
+      },
+    });
+
+    client.activate();
+
+    return () => {
+      client.deactivate();
+    };
+    
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -91,6 +134,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         logout,
         isAuthenticated,
         user,
+        limitations,
       }}
     >
       {children}

@@ -11,6 +11,7 @@ export const SERVER_LINK = config.server;
 export const IMAGE_URL = config.imagepath;
 export const NO_IMAGE = config.noImage;
 export const SERVER_API = config.serverapi;
+export const WEB_SOCKET_URL = config.websocket;
 
 //web route
 export const HOMEPAGEURL = config.homepageurl;
