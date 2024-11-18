@@ -28,31 +28,32 @@ const environments = {
     server: "http://localhost/app/newtrainedguide/trained-guide/server",
     serverapi: "http://localhost:8080/api",
     imagepath: `http://localhost/image`,
+    websocket: `http://localhost:8080/ws`,
   },
   qa: {
     webLink: `${baseDomainQa}`,
     server: `${baseDomainQa}/server`,
     serverapi: `${baseDomainQa}/server/Api`,
     imagepath: `${baseDomainQa}/image`,
+    websocket: `${baseDomainQa}/ws`,
   },
   production: {
     webLink: `${baseDomainProd}`,
     server: `${baseDomainProd}/server`,
     serverapi: `${baseDomainProd}/server/Api`,
     imagepath: `${baseDomainProd}/image`,
+    websocket: `${baseDomainProd}/ws`,
   },
 };
 
-// Merge common configuration with environment-specific configuration
 const config = {
   ...commonConfig,
   ...environments[env],
 
-  // Web routes
   homepageurl: "/",
-  authpage:'Auth',
-  loginsuccess:'login-success',
-  dashboard:'dashboard',
+  authpage: "Auth",
+  loginsuccess: "login-success",
+  dashboard: "dashboard",
 };
 
 export default config;
