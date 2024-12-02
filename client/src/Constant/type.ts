@@ -12,10 +12,14 @@ declare global {
   }
 }
 
-export type UserUi = "DASHBOARD" | "ADDITEM" | "UPDATEITEM" | "MYITEM";
+export type UserUi = "DASHBOARD" | "ADDITEM" | "UPDATEITEM" | "MYITEM" | "APPCONFIG"|"ADDEVENT"|"SYSTEMLOGS";
+
 export enum UserUiEnum {
   dashboard = "DASHBOARD",
   additem = "ADDITEM",
   updateitem = "UPDATEITEM",
   myitem = "MYITEM",
+  appconfig = 'APPCONFIG',
+  addevent = "ADDEVENT",
+  systemlogs = "SYSTEMLOGS"
 }
