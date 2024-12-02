@@ -110,7 +110,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       onConnect: () => {
         client.subscribe("/topic/configUpdates", (message) => {
           const updatedConfig = JSON.parse(message.body);
+          console.log(updatedConfig);
+          
           setLimitations(updatedConfig);
+        });
+
+        client.subscribe("/topic/savedEvent", (message) => {
+          const savedEvent = JSON.parse(message.body);
+          console.log(savedEvent);
+        });
+
+        client.subscribe("/topic/updateEvent", (message) => {
+          const updateEvent = JSON.parse(message.body);
+          console.log(updateEvent);
         });
       },
       debug: (str) => {
