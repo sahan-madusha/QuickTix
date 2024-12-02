@@ -54,7 +54,6 @@ export const AddEvent = () => {
 
   const handleSubmit = (values) => {
     if (selectedEvent) {
-      // Handle Update Event
       console.log("Event Updated: ", values);
       toast.success("Event updated successfully!");
     } else {
@@ -80,7 +79,6 @@ export const AddEvent = () => {
     maxCount: 1,
   };
 
-  // Handle event click and load data into form
   const handleEventClick = (event) => {
     setSelectedEvent(event);
     console.log(selectedEvent);
@@ -147,8 +145,7 @@ export const AddEvent = () => {
                   },
                 ]}
               >
-                <InputNumber
-                  min={1}
+                <Input
                   placeholder="Please add google location of event"
                   className="w-full"
                 />
