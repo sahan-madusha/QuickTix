@@ -33,7 +33,11 @@ public class SecurityConfig {
                                 "/api/auth/signin",
                                 "/api/config/update",
                                 "/api/config/{id}",
-                                "/ws/**").permitAll()
+                                "/ws/**",
+                                "api/event/add",
+                                "api/event/update",
+                                "api/event/list-events",
+                                "/api/event/{id}").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
