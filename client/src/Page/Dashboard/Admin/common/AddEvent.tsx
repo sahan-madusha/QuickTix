@@ -8,13 +8,17 @@ import {
   Card,
   Upload,
   List,
+  TimePicker,
 } from "antd";
 import { toast } from "react-toastify";
 import { PlusOutlined } from "@ant-design/icons";
+import { AddEventData } from "../../../../Api";
 
 const { TextArea } = Input;
 
 export const AddEvent = () => {
+  const [form] = Form.useForm();
+
   const [events, setEvents] = useState([
     {
       id: 1,
@@ -52,14 +56,25 @@ export const AddEvent = () => {
 
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const handleSubmit = (values) => {
-    if (selectedEvent) {
-      console.log("Event Updated: ", values);
-      toast.success("Event updated successfully!");
-    } else {
-      // Handle Add New Event
-      console.log("Event Data Submitted: ", values);
-      toast.success("Event added successfully!");
+  const handleSubmit = async (values) => {
+    const formattedDate = new Date(values.date).toISOString().split("T")[0];
+    const formattedTime = new Date(values.time).toTimeString().split(" ")[0];
+
+    try {
+      const updatedValues = {
+        ...values,
+        date: formattedDate,
+        time: formattedTime,
+        image: "sampleimage.png",
+        status: 1,
+      };
+
+      const response = await AddEventData(updatedValues);
+      toast.success(response.message);
+      form.resetFields();
+
+    } catch (error) {
+      toast.error(error.message);
     }
   };
 
@@ -88,6 +103,7 @@ export const AddEvent = () => {
     <div className="flex gap-x-5">
       <Card className="w-full max-w-2xl shadow-lg">
         <Form
+          form={form}
           layout="vertical"
           onFinish={handleSubmit}
           onFinishFailed={handleFailedSubmit}
@@ -162,6 +178,18 @@ export const AddEvent = () => {
                 ]}
               >
                 <DatePicker className="w-full" />
+              </Form.Item>
+              <Form.Item
+                label="Event Time"
+                name="time"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the event time",
+                  },
+                ]}
+              >
+                <TimePicker className="w-full" format="HH:mm" />
               </Form.Item>
             </div>
           </div>
