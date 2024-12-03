@@ -95,14 +95,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [authToken]);
 
-
-  const fetchConfData = async()=>{
+  const fetchConfData = async () => {
     const configdata = await fetchConfigData(1);
-    setLimitations(configdata)
-  }
+    setLimitations(configdata);
+  };
 
   useEffect(() => {
-
     fetchConfData();
 
     const client = new Client({
@@ -111,7 +109,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         client.subscribe("/topic/configUpdates", (message) => {
           const updatedConfig = JSON.parse(message.body);
           console.log(updatedConfig);
-          
+
           setLimitations(updatedConfig);
         });
 
@@ -135,7 +133,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       client.deactivate();
     };
-    
   }, []);
 
   return (
