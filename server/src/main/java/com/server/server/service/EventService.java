@@ -37,6 +37,7 @@ public class EventService {
         return eventRepository.findAll().stream()
                 .map(event -> {
                     Map<String, Object> eventData = new HashMap<>();
+                    eventData.put("id", event.getId());
                     eventData.put("name", event.getName());
                     eventData.put("image", event.getImage());
                     eventData.put("status", event.getStatus());
