@@ -34,9 +34,10 @@ public class SecurityConfig {
                                 "/api/config/update",
                                 "/api/config/{id}",
                                 "/ws/**",
-                                "api/event/add",
-                                "api/event/update",
-                                "api/event/list-events",
+                                "/api/event/add",
+                                "/api/event/update",
+                                "/api/event/list-events",
+                                "/api/event/list-events-user/{id}",
                                 "/api/event/{id}",
                                 "/api/getsystemlogs",
                                 "/api/stats").permitAll()

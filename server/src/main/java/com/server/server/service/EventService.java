@@ -2,7 +2,9 @@ package com.server.server.service;
 
 import com.server.server.dto.EventDto;
 import com.server.server.entity.Events;
+import com.server.server.entity.User;
 import com.server.server.repository.EventRepository;
+import com.server.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
@@ -15,13 +17,27 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public long getTotalEventCount() {
         return eventRepository.count();
     }
 
     public Events saveEvent(EventDto eventDto) {
+        User eventUser = userRepository.findById(eventDto.getUserId()).get();
+
         Events eventEntity = new Events();
-        return getEvents(eventDto, eventEntity);
+        eventEntity.setName(eventDto.getName());
+        eventEntity.setLocation(eventDto.getLocation());
+        eventEntity.setDate(eventDto.getDate());
+        eventEntity.setTime(eventDto.getTime());
+        eventEntity.setDescription(eventDto.getDescription());
+        eventEntity.setImage(eventDto.getImage());
+        eventEntity.setStatus(eventDto.getStatus());
+        eventEntity.setUser(eventUser);
+
+        return eventRepository.save(eventEntity);
     }
 
     public Events updateEvent(EventDto eventDto) throws Exception {
@@ -32,6 +48,19 @@ public class EventService {
 
     public List<Map<String, Object>> getAllEventImagesAndNames() {
         return eventRepository.findAll().stream()
+                .map(event -> {
+                    Map<String, Object> eventData = new HashMap<>();
+                    eventData.put("id", event.getId());
+                    eventData.put("name", event.getName());
+                    eventData.put("image", event.getImage());
+                    eventData.put("status", event.getStatus());
+                    return eventData;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<Map<String, Object>> getAllEventByUserId(int userId) {
+        return eventRepository.findByUserId(userId).stream()
                 .map(event -> {
                     Map<String, Object> eventData = new HashMap<>();
                     eventData.put("id", event.getId());
