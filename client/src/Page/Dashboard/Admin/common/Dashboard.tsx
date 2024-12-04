@@ -75,9 +75,6 @@ export const Dashboard = () => {
             </Row>
           </div>
         </div>
-        <div className="mx-auto mt-5 h-20">
-          {/* <SystemLogs /> */}
-        </div>
       </div>
     </>
   );

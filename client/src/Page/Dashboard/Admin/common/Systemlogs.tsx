@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Space, Button, Spin } from "antd";
+import { Table, Spin } from "antd";
 import { getAllLogs } from "../../../../Api";
+import { useAuthContext } from "../../../../Context";
 
 export const SystemLogs = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { systemLogs } = useAuthContext();
 
   const fetchLogs = async () => {
     setLoading(true);
@@ -21,6 +23,10 @@ export const SystemLogs = () => {
   useEffect(() => {
     fetchLogs();
   }, []);
+
+  useEffect(() => {
+    setLogs((prevLogs) => [systemLogs, ...prevLogs]);
+  }, [systemLogs]);
 
   const columns = [
     {
@@ -54,7 +60,9 @@ export const SystemLogs = () => {
   ];
 
   const rowClassName = (record) => {
-    const className = `${record.status === "1" ? "bg-green-100" : "bg-red-100"}`
+    const className = `${
+      record.status === "1" ? "bg-green-100" : "bg-red-100"
+    }`;
     return className;
   };
 
@@ -63,7 +71,7 @@ export const SystemLogs = () => {
   }
 
   return (
-    <div className="system-logs-container">
+    <div className="system-logs-container overflow-x-scroll">
       <Table
         columns={columns}
         dataSource={logs}
@@ -72,7 +80,6 @@ export const SystemLogs = () => {
         pagination={{
           pageSize: 10,
         }}
-        scroll={{ y: 400 }}
         bordered
       />
     </div>

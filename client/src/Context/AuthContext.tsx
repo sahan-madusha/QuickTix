@@ -25,6 +25,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User;
   limitations: Config;
+  systemLogs:any
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   });
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [limitations, setLimitations] = useState<Config>();
+  const [systemLogs , setSystemLogs] = useState([])
 
   const decodeToken = (token: string) => {
     if (typeof token !== "string" || !token.trim()) {
@@ -124,8 +126,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         client.subscribe("/topic/systemlogs", (message) => {
-          const updateEvent = JSON.parse(message.body);
-          console.log(updateEvent);
+          const systemLogs = JSON.parse(message.body);
+          setSystemLogs(systemLogs)
         });
       },
       debug: (str) => {
@@ -149,6 +151,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isAuthenticated,
         user,
         limitations,
+        systemLogs
       }}
     >
       {children}
