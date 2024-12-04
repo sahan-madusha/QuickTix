@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { Button } from "antd";
 import { UserUiEnum } from "../../../Constant";
 import {
-  AppstoreAddOutlined,
   DashboardOutlined,
   InteractionOutlined,
 } from "@ant-design/icons";
-import { AddEvent, AppConfig, Dashboard, SystemLogs } from "./common";
+import { AppConfig, Dashboard, ExistingEvent, SystemLogs } from "./common";
 
 export const AdminDashboard = () => {
   const [selectedNav, setSelectedNav] = useState(UserUiEnum.dashboard);
@@ -52,23 +51,6 @@ export const AdminDashboard = () => {
             </Button>
             <Button
               className={`border-1 mx-2 border-blue-500  p-12 ${
-                selectedNav === UserUiEnum.addevent
-                  ? `bg-blue-950 text-white`
-                  : `text-blue-500`
-              } `}
-              onClick={() => {
-                setSelectedNav(UserUiEnum.addevent);
-              }}
-            >
-              <div>
-                <div>
-                  <AppstoreAddOutlined className="text-lg" />
-                </div>
-                <span className="text-xs">Add event</span>
-              </div>
-            </Button>
-            <Button
-              className={`border-1 mx-2 border-blue-500  p-12 ${
                 selectedNav === UserUiEnum.systemlogs
                   ? `bg-blue-950 text-white`
                   : `text-blue-500`
@@ -82,6 +64,23 @@ export const AdminDashboard = () => {
                   <InteractionOutlined className="text-lg" />
                 </div>
                 <span className="text-xs">System logs</span>
+              </div>
+            </Button>
+            <Button
+              className={`border-1 mx-2 border-blue-500  p-12 ${
+                selectedNav === UserUiEnum.addevent
+                  ? `bg-blue-950 text-white`
+                  : `text-blue-500`
+              } `}
+              onClick={() => {
+                setSelectedNav(UserUiEnum.addevent);
+              }}
+            >
+              <div>
+                <div>
+                  <InteractionOutlined className="text-lg" />
+                </div>
+                <span className="text-xs">Evenys</span>
               </div>
             </Button>
           </div>
@@ -100,14 +99,14 @@ export const AdminDashboard = () => {
                 <AppConfig />
               </>
             )}
-            {selectedNav === UserUiEnum.addevent && (
-              <>
-                <AddEvent />
-              </>
-            )}
             {selectedNav === UserUiEnum.systemlogs && (
               <>
                 <SystemLogs />
+              </>
+            )}
+            {selectedNav === UserUiEnum.addevent && (
+              <>
+                <ExistingEvent isEventFetch={undefined} onEventClick={()=>{}} />
               </>
             )}
           </div>

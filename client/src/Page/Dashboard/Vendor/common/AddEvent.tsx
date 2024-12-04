@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Form,
   Input,
@@ -6,42 +6,27 @@ import {
   DatePicker,
   Card,
   Upload,
-  List,
   TimePicker,
   Spin,
   Switch,
 } from "antd";
 import { toast } from "react-toastify";
 import { PlusOutlined } from "@ant-design/icons";
-import {
-  AddEventData,
-  GetAllEvents,
-  GetEventData,
-  UpdateEventData,
-} from "../../../../Api";
+import { AddEventData, GetEventData, UpdateEventData } from "../../../../Api";
 import { IMAGE_URL } from "../../../../Constant";
 import moment from "moment";
+import { ExistingEvent } from "./ExistingEvent";
 
 const { TextArea } = Input;
 
 export const AddEvent = () => {
   const [form] = Form.useForm();
 
-  const [events, setEvents] = useState([]);
   const [isSelectedEvent, setIsSelectedEvent] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState();
   const [isEventFetch, setIsEventFetch] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
-
-  const fetchEvents = async () => {
-    try {
-      const data = await GetAllEvents();
-      setEvents(data);
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    }
-  };
 
   const handleSubmit = async (values) => {
     setIsLoading(true);
@@ -119,10 +104,6 @@ export const AddEvent = () => {
   const handleToggle = (checked) => {
     setIsToggled(checked);
   };
-
-  useEffect(() => {
-    fetchEvents();
-  }, [isEventFetch]);
 
   return (
     <>
@@ -257,31 +238,10 @@ export const AddEvent = () => {
           </Card>
 
           {/* Display All Events */}
-          <Card className="w-full max-w-2xl shadow-lg">
-            <List
-              grid={{ gutter: 6, column: 3 }}
-              dataSource={events}
-              renderItem={(event) => (
-                <List.Item onClick={() => handleEventClick(event.id)}>
-                  <Card
-                    className={`${
-                      event.status === 1 ? "bg-green-200" : "bg-red-200"
-                    }`}
-                    cover={
-                      <img
-                        alt={event.name}
-                        src={`${IMAGE_URL}/${event.image}`}
-                        className="h-28 w-24 object-cover"
-                      />
-                    }
-                    hoverable
-                  >
-                    <Card.Meta title={event.name} />
-                  </Card>
-                </List.Item>
-              )}
-            />
-          </Card>
+          <ExistingEvent
+            isEventFetch={isEventFetch}
+            onEventClick={handleEventClick}
+          />
         </div>
       )}
     </>

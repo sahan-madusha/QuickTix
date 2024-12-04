@@ -1,3 +1,3 @@
-export * from './AddItem'
-export * from './UpdateItem'
 export * from './Dashboard'
+export * from './AddEvent'
+export * from './AddTickets'

@@ -1,8 +1,8 @@
 import { Button } from "antd";
 import React, { useState } from "react";
-import { DashboardOutlined } from "@ant-design/icons";
+import { AppstoreAddOutlined, DashboardOutlined } from "@ant-design/icons";
 import { UserUiEnum } from "../../../Constant";
-import { AddItem, Dashboard, UpdateItem } from "./common";
+import { AddEvent, AddTickets, Dashboard } from "./common";
 
 export const VendorDashboard = () => {
   const [selectedNav, setSelectedNav] = useState(UserUiEnum.dashboard);
@@ -31,42 +31,36 @@ export const VendorDashboard = () => {
             </Button>
             <Button
               className={`border-1 mx-2 border-blue-500  p-12 ${
-                selectedNav === UserUiEnum.additem
+                selectedNav === UserUiEnum.addevent
                   ? `bg-blue-950 text-white`
                   : `text-blue-500`
               } `}
               onClick={() => {
-                setSelectedNav(UserUiEnum.additem);
+                setSelectedNav(UserUiEnum.addevent);
               }}
             >
               <div>
                 <div>
-                  <DashboardOutlined className="text-lg" />
+                  <AppstoreAddOutlined className="text-lg" />
                 </div>
-                <span className="text-xs">
-                  Add Events & <br />
-                  Ticket
-                </span>
+                <span className="text-xs">Event manage</span>
               </div>
             </Button>
             <Button
               className={`border-1 mx-2 border-blue-500  p-12 ${
-                selectedNav === UserUiEnum.updateitem
+                selectedNav === UserUiEnum.addticket
                   ? `bg-blue-950 text-white`
                   : `text-blue-500`
               } `}
               onClick={() => {
-                setSelectedNav(UserUiEnum.updateitem);
+                setSelectedNav(UserUiEnum.addticket);
               }}
             >
               <div>
                 <div>
                   <DashboardOutlined className="text-lg" />
                 </div>
-                <span className="text-xs">
-                  Update Events & <br />
-                  Ticket
-                </span>
+                <span className="text-xs">Ticket manage</span>
               </div>
             </Button>
           </div>
@@ -78,14 +72,14 @@ export const VendorDashboard = () => {
                 <Dashboard />
               </>
             )}
-            {selectedNav === UserUiEnum.additem && (
+            {selectedNav === UserUiEnum.addevent && (
               <>
-                <AddItem />
+                <AddEvent />
               </>
             )}
-            {selectedNav === UserUiEnum.updateitem && (
+            {selectedNav === UserUiEnum.addticket && (
               <>
-                <UpdateItem />
+                <AddTickets />
               </>
             )}
           </div>
