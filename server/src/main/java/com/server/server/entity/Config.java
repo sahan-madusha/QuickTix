@@ -2,9 +2,11 @@ package com.server.server.entity;
 
 import com.server.server.enums.TicketLimitationType;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "config")
 public class Config {
@@ -24,30 +26,4 @@ public class Config {
 
     @Column(name = "lastupdate", nullable = true)
     private LocalDateTime lastUpdate;
-
-    public Config() {
-    }
-
-    public Config(int id, int vendor_limitation, int customerLimitation, TicketLimitationType type, LocalDateTime lastupdate) {
-        this.id = id;
-        this.vendorLimitation = vendor_limitation;
-        this.customerLimitation = customerLimitation;
-        this.type = type;
-        this.lastUpdate = lastupdate;
-    }
-
-    public int getId() {return id;}
-    public void setId(int id) {this.id = id;}
-
-    public Integer getVendorLimitation() {return vendorLimitation;}
-    public void setVendorLimitation(Integer vendorLimitation) {this.vendorLimitation = vendorLimitation;}
-
-    public Integer getCustomerLimitation() {return customerLimitation;}
-    public void setCustomerLimitation(Integer customerLimitation) {this.customerLimitation = customerLimitation;}
-
-    public TicketLimitationType getType() {return type;}
-    public void setType(TicketLimitationType type) {this.type = type;}
-
-    public LocalDateTime getLastUpdate() {return lastUpdate;}
-    public void setLastUpdate(LocalDateTime lastUpdate) {this.lastUpdate = lastUpdate;}
 }
