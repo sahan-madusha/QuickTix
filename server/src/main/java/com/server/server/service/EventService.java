@@ -5,10 +5,6 @@ import com.server.server.entity.Events;
 import com.server.server.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +14,6 @@ import java.util.stream.Collectors;
 public class EventService {
     @Autowired
     private EventRepository eventRepository;
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");  // For LocalTime
 
     public Events saveEvent(EventDto eventDto) {
         Events eventEntity = new Events();

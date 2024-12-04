@@ -2,7 +2,10 @@ package com.server.server.controller;
 
 import com.server.server.dto.ConfigDto;
 import com.server.server.entity.Config;
+import com.server.server.entity.User;
+import com.server.server.repository.UserRepository;
 import com.server.server.service.ConfigService;
+import com.server.server.service.SystemLogsService;
 import com.server.server.util.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,16 +22,22 @@ public class ConfigController {
 
     private final ConfigService configService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final SystemLogsService systemLogsService;
+    private final UserRepository userRepository;
 
-    public ConfigController(ConfigService configService, SimpMessagingTemplate messagingTemplate) {
+    public ConfigController(ConfigService configService, SimpMessagingTemplate messagingTemplate, SystemLogsService systemLogsService, UserRepository userRepository) {
         this.configService = configService;
         this.messagingTemplate = messagingTemplate;
+        this.systemLogsService = systemLogsService;
+        this.userRepository = userRepository;
     }
 
     //UPDATE : Update the app config
     @PostMapping("/update")
     @Operation(summary = "Update configuration data")
     public ResponseEntity<?> updateConfig(@RequestBody ConfigDto configDto) {
+        User adminUser = userRepository.findByUsername("admin").get();
+
         try {
             int configId = 1;
             Config existingConfig = configService.getConfig(configId);
@@ -39,9 +48,12 @@ public class ConfigController {
             existingConfig.setLastUpdate(LocalDateTime.now());
 
             Config updatedConfig = configService.updateConfig(existingConfig);
+            systemLogsService.save("Update configuration data => Vendor limitation : " + configDto.getVendorLimitation() +"Customer limitation :"+configDto.getCustomerLimitation() + "Type :"+configDto.getType(), adminUser , "1");
+
             messagingTemplate.convertAndSend("/topic/configUpdates", updatedConfig);
             return ResponseEntity.ok(new MessageResponse( "Config successfully"));
         } catch (Exception e) {
+            systemLogsService.save("Update configuration data => Internal server error ", adminUser , "0");
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
     }

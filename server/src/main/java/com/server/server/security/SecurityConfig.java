@@ -37,7 +37,8 @@ public class SecurityConfig {
                                 "api/event/add",
                                 "api/event/update",
                                 "api/event/list-events",
-                                "/api/event/{id}").permitAll()
+                                "/api/event/{id}",
+                                "/api/getsystemlogs").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
