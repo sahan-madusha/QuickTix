@@ -15,6 +15,10 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
+    public long getTotalEventCount() {
+        return eventRepository.count();
+    }
+
     public Events saveEvent(EventDto eventDto) {
         Events eventEntity = new Events();
         return getEvents(eventDto, eventEntity);
