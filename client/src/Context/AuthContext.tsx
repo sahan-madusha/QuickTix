@@ -25,6 +25,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User;
   limitations: Config;
+  systemLogs:any
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   });
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [limitations, setLimitations] = useState<Config>();
+  const [systemLogs , setSystemLogs] = useState([])
 
   const decodeToken = (token: string) => {
     if (typeof token !== "string" || !token.trim()) {
@@ -95,14 +97,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [authToken]);
 
-
-  const fetchConfData = async()=>{
+  const fetchConfData = async () => {
     const configdata = await fetchConfigData(1);
-    setLimitations(configdata)
-  }
+    setLimitations(configdata);
+  };
 
   useEffect(() => {
-
     fetchConfData();
 
     const client = new Client({
@@ -110,7 +110,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       onConnect: () => {
         client.subscribe("/topic/configUpdates", (message) => {
           const updatedConfig = JSON.parse(message.body);
+          console.log(updatedConfig);
+
           setLimitations(updatedConfig);
+        });
+
+        client.subscribe("/topic/savedEvent", (message) => {
+          const savedEvent = JSON.parse(message.body);
+          console.log(savedEvent);
+        });
+
+        client.subscribe("/topic/updateEvent", (message) => {
+          const updateEvent = JSON.parse(message.body);
+          console.log(updateEvent);
+        });
+
+        client.subscribe("/topic/systemlogs", (message) => {
+          const systemLogs = JSON.parse(message.body);
+          setSystemLogs(systemLogs)
         });
       },
       debug: (str) => {
@@ -123,7 +140,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       client.deactivate();
     };
-    
   }, []);
 
   return (
@@ -135,6 +151,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isAuthenticated,
         user,
         limitations,
+        systemLogs
       }}
     >
       {children}
