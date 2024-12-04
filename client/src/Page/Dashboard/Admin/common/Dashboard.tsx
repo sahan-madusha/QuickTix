@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { useAuthContext } from "../../../../Context";
 import { Card, Col, Row, Typography } from "antd";
+import { GetAppStats } from "../../../../Api";
 import { SystemLogs } from "./Systemlogs";
 
 const { Text } = Typography;
@@ -9,20 +10,37 @@ const { Text } = Typography;
 export const Dashboard = () => {
   const { limitations } = useAuthContext();
   const formattedDate = format(new Date(limitations?.lastUpdate), "PPpp");
+  const [statsList, setStatsList] = useState([
+    { title: "QuickTix", value: 0, bgColor: "bg-blue-500" },
+    { title: "Vendors", value: 0, bgColor: "bg-green-500" },
+    { title: "Customers", value: 0, bgColor: "bg-yellow-500" },
+    { title: "Events", value: 0, bgColor: "bg-purple-500" },
+  ]);
 
-  const stats = [
-    { title: "Total Tickets", value: 1500, bgColor: "bg-blue-500" },
-    { title: "Vendors", value: 45, bgColor: "bg-green-500" },
-    { title: "Customers", value: 1200, bgColor: "bg-yellow-500" },
-    { title: "Events", value: 30, bgColor: "bg-purple-500" },
-  ];
+  const fetchStatsData = async () => {
+    const res = await GetAppStats();
+    setStatsList([
+      { title: "QuickTix", value: 0, bgColor: "bg-blue-500" },
+      { title: "Vendors", value: res.totalVendors, bgColor: "bg-green-500" },
+      {
+        title: "Customers",
+        value: res.totalCustomers,
+        bgColor: "bg-yellow-500",
+      },
+      { title: "Events", value: res.totalEvents, bgColor: "bg-purple-500" },
+    ]);
+  };
+
+  useEffect(() => {
+    fetchStatsData();
+  }, []);
 
   return (
     <>
       <div>
         <div className="flex items-start">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
+            {statsList.map((stat, index) => (
               <div
                 key={index}
                 className={`rounded-lg shadow-md p-6 text-white ${stat.bgColor}`}
@@ -74,6 +92,10 @@ export const Dashboard = () => {
               </Col>
             </Row>
           </div>
+        </div>
+
+        <div className=" w-[175vh] h-[40vh] overflow-scroll">
+          <SystemLogs />
         </div>
       </div>
     </>
