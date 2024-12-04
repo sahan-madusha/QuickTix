@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/getsystemlogs")
@@ -23,8 +26,19 @@ public class SystemLogsController {
 
     @GetMapping
     @Operation(summary = "Fetch a system logs")
-    public ResponseEntity<List<SystemLogs>> getAllLogs() {
+    public ResponseEntity<List<Map<String, Object>>> getAllLogs() {
         List<SystemLogs> logs = systemLogsService.getAllLogsLatestFirst();
-        return ResponseEntity.ok(logs);
+        List<Map<String, Object>> formattedData = new ArrayList<>();
+
+        for (SystemLogs log : logs) {
+            Map<String, Object> logData = new HashMap<>();
+            logData.put("date", log.getDate());
+            logData.put("time", log.getTime());
+            logData.put("logMessage", log.getLogs());
+            logData.put("username", log.getUser().getFirstname());
+            logData.put("status", log.getStatus());
+            formattedData.add(logData);
+        }
+        return ResponseEntity.ok(formattedData);
     }
 }

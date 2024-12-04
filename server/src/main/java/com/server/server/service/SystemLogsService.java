@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SystemLogsService {
@@ -33,12 +35,12 @@ public class SystemLogsService {
         systemLogs.setStatus(status);
         systemLogsRepository.save(systemLogs);
 
-        List<Object> sendData = new ArrayList<>();
-        sendData.add(LocalDate.now());
-        sendData.add(LocalTime.now());
-        sendData.add(logMessage);
-        sendData.add(user.getFirstname());
-        sendData.add(status);
+        Map<String, Object> sendData = new HashMap<>();
+        sendData.put("date", LocalDate.now());
+        sendData.put("time", LocalTime.now());
+        sendData.put("logMessage", logMessage);
+        sendData.put("username", user.getFirstname());
+        sendData.put("status", status);
         messagingTemplate.convertAndSend("/topic/systemlogs", sendData);
     }
 
