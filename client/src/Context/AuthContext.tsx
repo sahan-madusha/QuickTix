@@ -5,6 +5,7 @@ import { Client } from "@stomp/stompjs";
 import { WEB_SOCKET_URL } from "../Constant";
 import { fetchConfigData } from "../Api";
 interface User {
+  userId: any;
   username: string;
   email: string;
   userRole: string;
@@ -25,7 +26,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User;
   limitations: Config;
-  systemLogs:any
+  systemLogs: any;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -35,13 +36,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.getItem("authToken")
   );
   const [user, setUser] = useState<User>({
+    userId: "",
     username: "",
     email: "",
     userRole: "",
   });
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [limitations, setLimitations] = useState<Config>();
-  const [systemLogs , setSystemLogs] = useState([])
+  const [systemLogs, setSystemLogs] = useState([]);
 
   const decodeToken = (token: string) => {
     if (typeof token !== "string" || !token.trim()) {
@@ -51,18 +53,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       const decoded = jwtDecode<{
+        userId: any;
         sub: string;
         email: string;
         userRole: string;
       }>(token);
       setUser({
+        userId: decoded.userId || "",
         username: decoded.sub || "",
         email: decoded.email || "",
         userRole: decoded.userRole || "",
       });
+
+      console.log(decoded);
     } catch (error) {
       console.error("Failed to decode token:", error);
       setUser({
+        userId: "",
         username: "",
         email: "",
         userRole: "",
@@ -81,6 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setAuthToken(null);
     localStorage.removeItem("authToken");
     setUser({
+      userId:"",
       username: "",
       email: "",
       userRole: "",
@@ -127,7 +135,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         client.subscribe("/topic/systemlogs", (message) => {
           const systemLogs = JSON.parse(message.body);
-          setSystemLogs(systemLogs)
+          setSystemLogs(systemLogs);
         });
       },
       debug: (str) => {
@@ -151,7 +159,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isAuthenticated,
         user,
         limitations,
-        systemLogs
+        systemLogs,
       }}
     >
       {children}

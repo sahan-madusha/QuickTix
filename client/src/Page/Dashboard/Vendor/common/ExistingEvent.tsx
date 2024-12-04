@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Card, List } from "antd";
 import { IMAGE_URL } from "../../../../Constant";
-import { GetAllEvents } from "../../../../Api";
+import { GetUsersEvents } from "../../../../Api";
+import { useAuthContext } from "../../../../Context";
 
 interface ExistingEventProps {
   isEventFetch: any;
@@ -13,10 +14,11 @@ export const ExistingEvent: React.FC<ExistingEventProps> = ({
   onEventClick,
 }) => {
   const [events, setEvents] = useState([]);
+  const { user } = useAuthContext();
 
   const fetchEvents = async () => {
     try {
-      const data = await GetAllEvents();
+      const data = await GetUsersEvents(user.userId);
       setEvents(data);
     } catch (error) {
       console.error("Error fetching events:", error);

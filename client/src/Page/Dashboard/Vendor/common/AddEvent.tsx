@@ -16,6 +16,7 @@ import { AddEventData, GetEventData, UpdateEventData } from "../../../../Api";
 import { IMAGE_URL } from "../../../../Constant";
 import moment from "moment";
 import { ExistingEvent } from "./ExistingEvent";
+import { useAuthContext } from "../../../../Context";
 
 const { TextArea } = Input;
 
@@ -27,7 +28,7 @@ export const AddEvent = () => {
   const [isEventFetch, setIsEventFetch] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
-
+  const { user } = useAuthContext();
   const handleSubmit = async (values) => {
     setIsLoading(true);
     const formattedDate = new Date(values.date).toISOString().split("T")[0];
@@ -42,6 +43,7 @@ export const AddEvent = () => {
           time: formattedTime,
           image: "lovebreeze.jpg",
           status: isToggled ? 1 : 0,
+          userId:user.userId
         };
 
         const response = await UpdateEventData(updatedValues);
@@ -53,6 +55,7 @@ export const AddEvent = () => {
           time: formattedTime,
           image: "lovebreeze.jpg",
           status: 1,
+          userId:user.userId
         };
 
         const response = await AddEventData(updatedValues);
