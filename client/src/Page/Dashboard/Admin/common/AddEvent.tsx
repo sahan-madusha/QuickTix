@@ -38,7 +38,6 @@ export const AddEvent = () => {
     try {
       const data = await GetAllEvents();
       setEvents(data);
-      console.log(data);
     } catch (error) {
       console.error("Error fetching events:", error);
     }
@@ -265,6 +264,9 @@ export const AddEvent = () => {
               renderItem={(event) => (
                 <List.Item onClick={() => handleEventClick(event.id)}>
                   <Card
+                    className={`${
+                      event.status === 1 ? "bg-green-200" : "bg-red-200"
+                    }`}
                     cover={
                       <img
                         alt={event.name}

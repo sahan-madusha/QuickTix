@@ -122,6 +122,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const updateEvent = JSON.parse(message.body);
           console.log(updateEvent);
         });
+
+        client.subscribe("/topic/systemlogs", (message) => {
+          const updateEvent = JSON.parse(message.body);
+          console.log(updateEvent);
+        });
       },
       debug: (str) => {
         console.log(str);
