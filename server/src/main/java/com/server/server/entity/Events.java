@@ -37,4 +37,8 @@ public class Events {
 
     @Column(nullable = false)
     private int status;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_events_users"))
+    private User user;
 }

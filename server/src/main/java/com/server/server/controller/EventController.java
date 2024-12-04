@@ -38,14 +38,14 @@ public class EventController {
     @PostMapping("/add")
     @Operation(summary = "add event data")
     public ResponseEntity<?> updateConfig(@RequestBody EventDto eventDto) {
-        User adminUser = userRepository.findByUsername("admin").get();
+        User eventUser  = userRepository.findById(eventDto.getUserId()).get();
         try {
             Events savedEvent = eventService.saveEvent(eventDto);
-            systemLogsService.save("Add new event : {" + eventDto +"}", adminUser , "1");
+            systemLogsService.save("Add new event : {" + eventDto +"}", eventUser  , "1");
             messagingTemplate.convertAndSend("/topic/savedEvent", savedEvent);
             return ResponseEntity.ok(new MessageResponse( "Event Added successfully"));
         }catch (Exception e){
-            systemLogsService.save("Add new event : Internal server error", adminUser , "0");
+            systemLogsService.save("Add new event : Internal server error", eventUser  , "0");
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
     }
@@ -54,15 +54,15 @@ public class EventController {
     @PostMapping("/update")
     @Operation(summary = "Update event data")
     public ResponseEntity<?> updateEvent(@RequestBody EventDto eventDto) {
-        User adminUser = userRepository.findByUsername("admin").get();
+        User eventUser  = userRepository.findById(eventDto.getUserId()).get();
 
         try {
             Events updatedEvent = eventService.updateEvent(eventDto);
             messagingTemplate.convertAndSend("/topic/updateEvent", updatedEvent);
-            systemLogsService.save("Update "+eventDto.getName()+" event {" + eventDto + "}", adminUser , "1");
+            systemLogsService.save("Update "+eventDto.getName()+" event {" + eventDto + "}", eventUser , "1");
             return ResponseEntity.ok(new MessageResponse("Event updated successfully"));
         } catch (Exception e) {
-            systemLogsService.save("Update event "+eventDto.getName()+" Internal server error", adminUser , "0");
+            systemLogsService.save("Update event "+eventDto.getName()+" Internal server error", eventUser , "0");
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
     }
@@ -73,6 +73,18 @@ public class EventController {
         try {
             List<Map<String, Object>> eventImagesAndNames = eventService.getAllEventImagesAndNames();
             return ResponseEntity.ok(eventImagesAndNames);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
+        }
+    }
+
+    @GetMapping("/list-events-user/{id}")
+    @Operation(summary = "Get all event from user")
+    public ResponseEntity<?> getAllEventByUserId(@PathVariable Integer id) {
+        try {
+            List<Map<String, Object>> events = eventService.getAllEventByUserId(id);
+            return ResponseEntity.ok(events);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));

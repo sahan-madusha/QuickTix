@@ -15,4 +15,5 @@ public class EventDto {
     private String description;
     private String image;
     private Integer status;
+    private Integer userId;
 }
