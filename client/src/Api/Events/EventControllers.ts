@@ -70,3 +70,16 @@ export const UpdateEventData = async (data: EventData) => {
     toast.error(errorMessage);
   }
 };
+
+
+export const GetUsersEvents = async (id:any) => {
+  try {
+    const response = await axios.get(`${SERVER_API}/event/list-events-user/${id}`);
+    return response.data;
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data?.message ||
+      "Something went wrong. Please try again.";
+    toast.error(errorMessage);
+  }
+};

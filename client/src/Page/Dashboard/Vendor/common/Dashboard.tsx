@@ -1,19 +1,102 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { useAuthContext } from "../../../../Context";
+import { Card, Col, Row, Typography } from "antd";
+import { GetAppStats } from "../../../../Api";
+
+const { Text } = Typography;
 
 export const Dashboard = () => {
+  const { limitations } = useAuthContext();
+  const formattedDate = format(new Date(limitations?.lastUpdate), "PPpp");
+  const [statsList, setStatsList] = useState([
+    { title: "QuickTix", value: 0, bgColor: "bg-blue-500" },
+    { title: "Sold tickets", value: 0, bgColor: "bg-green-500" },
+    { title: "Available tickets", value: 0, bgColor: "bg-yellow-500" },
+    { title: "Events", value: 0, bgColor: "bg-purple-500" },
+  ]);
+
+  const fetchStatsData = async () => {
+    const res = await GetAppStats();
+    setStatsList([
+      { title: "QuickTix", value: 0, bgColor: "bg-blue-500" },
+      {
+        title: "Sold tickets",
+        value: res.totalVendors,
+        bgColor: "bg-green-500",
+      },
+      {
+        title: "Available tickets",
+        value: res.totalCustomers,
+        bgColor: "bg-yellow-500",
+      },
+      { title: "Events", value: res.totalEvents, bgColor: "bg-purple-500" },
+    ]);
+  };
+
+  useEffect(() => {
+    fetchStatsData();
+  }, []);
+
   return (
     <>
-      <h1>DASHBOARD</h1>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto illum
-      repellat fugit quam error temporibus maiores atque in aperiam distinctio
-      totam doloribus, veritatis laudantium ut dolorum possimus repudiandae fuga
-      sunt! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque rem
-      error odio atque, dolores velit dolor non commodi reiciendis, repellendus
-      fugit ad consequuntur repellat, ipsam temporibus enim unde dicta.
-      Voluptates. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-      Quasi esse nemo nesciunt omnis eligendi aliquid iusto vero voluptates
-      voluptate. Ea similique autem magni facere minima rerum pariatur rem
-      veritatis fuga.
+      <div>
+        <div className="flex items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {statsList.map((stat, index) => (
+              <div
+                key={index}
+                className={`rounded-lg shadow-md p-6 text-white ${stat.bgColor}`}
+              >
+                <h2 className="text-lg font-semibold">{stat.title}</h2>
+                <p className="text-3xl font-bold mt-2">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mx-1">
+            <Row gutter={[16, 16]}>
+              {/* Vendor Limitation 1 */}
+              <Col span={12}>
+                <Card
+                  title="Vendor Ticket Adding Limitation"
+                  bordered
+                  hoverable
+                  className="shadow-lg"
+                >
+                  <div className="flex flex-col gap-y-2 justify-between items-center">
+                    <Text type="secondary">Last updated: {formattedDate}</Text>
+                    <div>
+                      <Text strong>{limitations?.vendorLimitation}</Text>
+                      <span> Per {limitations?.type}</span>
+                    </div>
+                  </div>
+                </Card>
+              </Col>
+
+              {/* Vendor Limitation 2 */}
+              <Col span={12}>
+                <Card
+                  title="Customer Ticket buying Limitation"
+                  bordered
+                  hoverable
+                  className="shadow-lg"
+                >
+                  <div className="flex flex-col gap-y-2 justify-between items-center">
+                    <Text type="secondary">Last updated: {formattedDate}</Text>
+                    <div>
+                      <Text strong>{limitations?.customerLimitation}</Text>
+                      <span className="capitalize">
+                        {" "}
+                        Per {limitations?.type}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              </Col>
+            </Row>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
