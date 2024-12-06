@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { ExistingEvent } from "./ExistingEvent";
+import React, { useState } from "react";
+import { ExistingEvent } from "../../../../Components";
 import { GetEventData } from "../../../../Api";
+import TicketAddForm from "./TicketAddForm";
 
 export const AddTickets = () => {
   const [isEventFetch, setIsEventFetch] = useState(1);
+  const [selectedEvent, setSelectedEvent] = useState<any>();
 
   const handleEventClick = async (event) => {
     try {
       const data = await GetEventData(event);
+      setSelectedEvent(data);
+      setIsEventFetch(isEventFetch + 1);
     } catch (error) {
       console.error("Error fetching event data:", error);
     } finally {
@@ -16,15 +20,17 @@ export const AddTickets = () => {
 
   return (
     <>
-      <div className="flex">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur
-        totam dolorum illum libero cumque adipisci tenetur quam nihil doloremque
-        minus sit, voluptatum possimus ut officiis, ullam non sunt officia
-        nobis!
-        <ExistingEvent
-          isEventFetch={isEventFetch}
-          onEventClick={handleEventClick}
-        />
+      <div className="flex justify-between">
+        <div className="w-1/2 px-5">
+          <TicketAddForm selectedEvent= {selectedEvent}/>
+        </div>
+        <div className="w-1/2">
+          {" "}
+          <ExistingEvent
+            isEventFetch={isEventFetch}
+            onEventClick={handleEventClick}
+          />
+        </div>
       </div>
     </>
   );

@@ -1,14 +1,27 @@
 import React, { useState } from "react";
 import { Button } from "antd";
 import { UserUiEnum } from "../../../Constant";
-import {
-  DashboardOutlined,
-  InteractionOutlined,
-} from "@ant-design/icons";
-import { AppConfig, Dashboard, ExistingEvent, SystemLogs } from "./common";
+import { DashboardOutlined, InteractionOutlined } from "@ant-design/icons";
+
+import { ExistingEvent } from "../../../Components";
+import { AppConfig, Dashboard, SystemLogs } from "./common";
+import { GetEventData } from "../../../Api";
 
 export const AdminDashboard = () => {
   const [selectedNav, setSelectedNav] = useState(UserUiEnum.dashboard);
+  const [isEventFetch, setIsEventFetch] = useState(1);
+  const [selectedEvent, setSelectedEvent] = useState<any>();
+
+  const handleEventClick = async (event) => {
+    try {
+      const data = await GetEventData(event);
+      setSelectedEvent(data);
+      setIsEventFetch(isEventFetch + 1);
+    } catch (error) {
+      console.error("Error fetching event data:", error);
+    } finally {
+    }
+  };
 
   return (
     <>
@@ -106,7 +119,10 @@ export const AdminDashboard = () => {
             )}
             {selectedNav === UserUiEnum.addevent && (
               <>
-                <ExistingEvent isEventFetch={undefined} onEventClick={()=>{}} />
+                <ExistingEvent
+                  isEventFetch={isEventFetch}
+                  onEventClick={handleEventClick}
+                />
               </>
             )}
           </div>
