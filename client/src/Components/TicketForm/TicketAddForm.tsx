@@ -9,9 +9,9 @@ import {
   Modal,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { TicketsDisplay } from "../../../../Components";
+import { TicketsDisplay } from "../../Components";
 
-const TicketAddForm = (selectedEvent: any) => {
+export const TicketAddForm = (selectedEvent: any) => {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUpdateTicket, setIsUpdateTicket] = useState<boolean>(false);
@@ -170,5 +170,3 @@ const TicketAddForm = (selectedEvent: any) => {
     </div>
   );
 };
-
-export default TicketAddForm;

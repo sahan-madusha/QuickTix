@@ -27,6 +27,7 @@ interface AuthContextType {
   user: User;
   limitations: Config;
   systemLogs: any;
+  isEventUpdated:any
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -44,6 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [limitations, setLimitations] = useState<Config>();
   const [systemLogs, setSystemLogs] = useState([]);
+  const [isEventUpdated , setEventUpdated] = useState<any>()
 
   const decodeToken = (token: string) => {
     if (typeof token !== "string" || !token.trim()) {
@@ -118,28 +120,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       onConnect: () => {
         client.subscribe("/topic/configUpdates", (message) => {
           const updatedConfig = JSON.parse(message.body);
-          console.log(updatedConfig);
+          // console.log(updatedConfig);
 
           setLimitations(updatedConfig);
         });
 
         client.subscribe("/topic/savedEvent", (message) => {
           const savedEvent = JSON.parse(message.body);
-          console.log(savedEvent);
+          setEventUpdated(savedEvent)
+          // console.log(savedEvent);
         });
 
         client.subscribe("/topic/updateEvent", (message) => {
           const updateEvent = JSON.parse(message.body);
-          console.log(updateEvent);
+          setEventUpdated(updateEvent)
+          console.log("updateEvent:::::::::::",updateEvent);
         });
 
         client.subscribe("/topic/systemlogs", (message) => {
           const systemLogs = JSON.parse(message.body);
-          setSystemLogs(systemLogs);
+          // setSystemLogs(systemLogs);
         });
       },
       debug: (str) => {
-        console.log(str);
       },
     });
 
@@ -154,6 +157,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider
       value={{
         authToken,
+        isEventUpdated,
         login,
         logout,
         isAuthenticated,

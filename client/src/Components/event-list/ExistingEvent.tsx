@@ -4,6 +4,7 @@ import { useAuthContext } from "../../Context";
 import { GetAllEvents, GetUsersEvents } from "../../Api";
 import { IMAGE_URL, UserRolesEnum } from "../../Constant";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
 interface ExistingEventProps {
   isEventFetch: any;
@@ -15,15 +16,15 @@ export const ExistingEvent: React.FC<ExistingEventProps> = ({
   onEventClick,
 }) => {
   const [events, setEvents] = useState([]);
-  const { user } = useAuthContext();
+  const { user, isEventUpdated } = useAuthContext();
 
   const fetchEvents = async () => {
     try {
       let data;
-      if (user.userRole === UserRolesEnum.admin) {
-        data = await GetAllEvents();
-      } else {
+      if (user.userRole === UserRolesEnum.vendor) {
         data = await GetUsersEvents(user.userId);
+      } else {
+        data = await GetAllEvents();
       }
       setEvents(data);
     } catch (error) {
@@ -33,7 +34,7 @@ export const ExistingEvent: React.FC<ExistingEventProps> = ({
 
   useEffect(() => {
     fetchEvents();
-  }, [isEventFetch]);
+  }, [isEventFetch, isEventUpdated]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
@@ -60,7 +61,16 @@ export const ExistingEvent: React.FC<ExistingEventProps> = ({
               >
                 <Card
                   hoverable
-                  onClick={() => onEventClick(event.id)}
+                  onClick={() => {
+                    if (
+                      user.userRole === UserRolesEnum.customer &&
+                      event.status === 0
+                    ) {
+                      toast.warn("Inactive one");
+                    } else {
+                      onEventClick(event.id);
+                    }
+                  }}
                   className="transition-transform transform hover:scale-105 rounded-xl shadow-md overflow-hidden"
                   cover={
                     <img

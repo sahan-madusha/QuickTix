@@ -8,8 +8,8 @@ import {
   Routes,
 } from "react-router-dom";
 
-import { AuthPage, Dashboard, HomePage, Loginsuccess } from "./Page";
-import { AUTHPAGE, DASHBOARD, HOMEPAGEURL, LOGINSUCCESS } from "./Constant";
+import { AuthPage, BookTicket, Dashboard, HomePage, Loginsuccess } from "./Page";
+import { AUTHPAGE, BOOKTICKET, DASHBOARD, HOMEPAGEURL, LOGINSUCCESS } from "./Constant";
 import { Footer, ScrollUpButton } from "./Components";
 import { ToastContainer } from "react-toastify";
 import NavigationBar from "./Components/Nav-bar/Nav-Bar";
@@ -32,6 +32,7 @@ function App() {
                     <Route path={AUTHPAGE} element={<AuthPage />} />
                     <Route path={LOGINSUCCESS} element={<Loginsuccess />} />
                     <Route path={DASHBOARD} element={<Dashboard />} />
+                    <Route path={BOOKTICKET} element={<BookTicket />} />
                   </Routes>
                   <ScrollUpButton />
                   <ToastContainer />

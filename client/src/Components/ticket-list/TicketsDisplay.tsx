@@ -7,11 +7,11 @@ import { UserRolesEnum } from "../../Constant";
 export const TicketsDisplay = ({
   tickets,
   showModal,
-  setSelectedTicket
+  setSelectedTicket,
 }: {
   tickets: any[];
   showModal?: any;
-  setSelectedTicket?:any
+  setSelectedTicket?: any;
 }) => {
   const { user, isAuthenticated } = useAuthContext();
 
@@ -63,8 +63,9 @@ export const TicketsDisplay = ({
                       <strong>Price:</strong> Rs:{ticket.price}.00
                     </p>
                     <p className="text-gray-700 my-0 py-0">
-                      <strong>Total Tickets:</strong> {ticket.qty}
+                      <strong>Available Qty:</strong> {ticket.qty}
                     </p>
+
                     {(user.userRole === UserRolesEnum.vendor ||
                       user.userRole === UserRolesEnum.admin) && (
                       <>
@@ -72,7 +73,7 @@ export const TicketsDisplay = ({
                           <strong>Sold Qty:</strong> {ticket.qty}
                         </p>
                         <p className="text-gray-700 my-0 py-0">
-                          <strong>Available Qty:</strong> {ticket.qty}
+                          <strong>Total Tickets:</strong> {ticket.qty}
                         </p>
                       </>
                     )}
@@ -83,7 +84,7 @@ export const TicketsDisplay = ({
                       icon={<UpCircleOutlined />}
                       onClick={() => {
                         showModal(true);
-                        setSelectedTicket(ticket)
+                        setSelectedTicket(ticket);
                       }}
                       className="w-full rounded-lg bg-blue-600 hover:bg-blue-500"
                     >

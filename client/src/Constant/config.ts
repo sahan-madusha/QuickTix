@@ -54,6 +54,7 @@ const config = {
   authpage: "Auth",
   loginsuccess: "login-success",
   dashboard: "dashboard",
+  bookTicket : "book-tickets",
 };
 
 export default config;

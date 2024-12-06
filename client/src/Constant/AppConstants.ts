@@ -18,3 +18,4 @@ export const HOMEPAGEURL = config.homepageurl;
 export const AUTHPAGE = config.authpage
 export const LOGINSUCCESS = config.loginsuccess
 export const DASHBOARD = config.dashboard
+export const BOOKTICKET = config.bookTicket

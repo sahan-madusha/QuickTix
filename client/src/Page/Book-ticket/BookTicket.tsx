@@ -1,8 +1,9 @@
+import {TicketAddForm} from "../../Components";
+import { GetEventData } from "../../Api";
+import { ExistingEvent } from "../../Components";
 import React, { useState } from "react";
-import { ExistingEvent, TicketAddForm } from "../../../../Components";
-import { GetEventData } from "../../../../Api";
 
-export const AddTickets = () => {
+export const BookTicket = () => {
   const [isEventFetch, setIsEventFetch] = useState(1);
   const [selectedEvent, setSelectedEvent] = useState<any>();
 
