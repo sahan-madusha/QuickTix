@@ -4,6 +4,7 @@ import com.server.server.dto.EventDto;
 import com.server.server.entity.Events;
 import com.server.server.entity.User;
 import com.server.server.repository.EventRepository;
+import com.server.server.repository.TicketsRepository;
 import com.server.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ public class EventService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TicketsRepository ticketsRepository;
 
     public long getTotalEventCount() {
         return eventRepository.count();
@@ -65,6 +69,10 @@ public class EventService {
                     Map<String, Object> eventData = new HashMap<>();
                     eventData.put("id", event.getId());
                     eventData.put("name", event.getName());
+                    eventData.put("location" , event.getLocation());
+                    eventData.put("date" , event.getDate());
+                    eventData.put("time" , event.getTime());
+                    eventData.put("description" , event.getDescription());
                     eventData.put("image", event.getImage());
                     eventData.put("status", event.getStatus());
                     return eventData;
@@ -72,10 +80,36 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
-    public Events getEventById(Integer id) {
-        return eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
+    public Map<String, Object> getEventById(Integer id) {
+        Events event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        List<Map<String, Object>> tickets = ticketsRepository.findByEventId(event.getId()).stream()
+                .map(ticket -> {
+                    Map<String, Object> ticketData = new HashMap<>();
+                    ticketData.put("id", ticket.getId());
+                    ticketData.put("name", ticket.getName());
+                    ticketData.put("price", ticket.getPrice());
+                    ticketData.put("description", ticket.getDescription());
+                    ticketData.put("qty", ticket.getQty());
+                    return ticketData;
+                })
+                .collect(Collectors.toList());
+
+        Map<String, Object> eventData = new HashMap<>();
+        eventData.put("id", event.getId());
+        eventData.put("name", event.getName());
+        eventData.put("location" , event.getLocation());
+        eventData.put("date" , event.getDate());
+        eventData.put("time" , event.getTime());
+        eventData.put("description" , event.getDescription());
+        eventData.put("image", event.getImage());
+        eventData.put("status", event.getStatus());
+        eventData.put("tickets", tickets);
+
+        return eventData;
     }
+
 
     private Events getEvents(EventDto eventDto, Events existingEvent) {
         existingEvent.setName(eventDto.getName());

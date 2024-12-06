@@ -97,7 +97,7 @@ public class EventController {
         User adminUser = userRepository.findByUsername("admin").get();
 
         try {
-            Events event = eventService.getEventById(id);
+            Object event = eventService.getEventById(id);
             systemLogsService.save("Fetch " + id +" Event data", adminUser , "1");
             return ResponseEntity.ok(event);
         } catch (RuntimeException e) {
