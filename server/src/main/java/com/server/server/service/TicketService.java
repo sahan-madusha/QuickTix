@@ -23,7 +23,7 @@ public class TicketService {
         this.ticketsLogRepository = ticketsLogRepository;
     }
 
-    public void addTicket(TicketsDto ticketDto) {
+    public void addOrUpdateTicket(TicketsDto ticketDto) {
         TicketRunnable ticketRunnable = new TicketRunnable(ticketDto, ticketsRepository, userRepository, eventRepository, ticketsLogRepository);
         Thread thread = new Thread(ticketRunnable);
         thread.start();

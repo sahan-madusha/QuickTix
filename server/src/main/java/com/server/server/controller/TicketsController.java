@@ -3,7 +3,9 @@ package com.server.server.controller;
 import com.server.server.dto.EventDto;
 import com.server.server.dto.TicketsDto;
 
+import com.server.server.entity.Tickets;
 import com.server.server.entity.User;
+import com.server.server.repository.TicketsRepository;
 import com.server.server.repository.UserRepository;
 import com.server.server.service.SystemLogsService;
 import com.server.server.service.TicketService;
@@ -24,11 +26,17 @@ public class TicketsController {
     private final TicketService ticketService;
     private final UserRepository userRepository;
     private final SystemLogsService systemLogsService;
+    private final TicketsRepository ticketsRepository;
 
-    public TicketsController(TicketService ticketService, UserRepository userRepository, SystemLogsService systemLogsService) {
+    public TicketsController(TicketService ticketService, UserRepository userRepository, SystemLogsService systemLogsService, TicketsRepository ticketsRepository) {
         this.ticketService = ticketService;
         this.userRepository = userRepository;
         this.systemLogsService = systemLogsService;
+        this.ticketsRepository = ticketsRepository;
+    }
+
+    public boolean doesTicketExist(TicketsDto ticketsDto) {
+        return ticketsRepository.findById(ticketsDto.getId()).isPresent();
     }
 
     //Add : Add new ticket
@@ -36,10 +44,19 @@ public class TicketsController {
     @Operation(summary = "add ticket data")
     public ResponseEntity<?> addTickets(@RequestBody TicketsDto ticketsDto) {
         User eventUser = userRepository.findById(ticketsDto.getUserId()).get();
+        boolean ticketIsExists = doesTicketExist(ticketsDto);
+
         try {
-            ticketService.addTicket(ticketsDto);
-            systemLogsService.save("Ticket Added successfully : => "+ticketsDto, eventUser, "1");
-            return ResponseEntity.ok(new MessageResponse( "Ticket Added successfully"));
+            ticketService.addOrUpdateTicket(ticketsDto);
+            String msg = "Ticket Added successfully";
+
+            if (ticketIsExists) {
+                msg = "Ticket Updated successfully";
+            }
+
+            ticketService.addOrUpdateTicket(ticketsDto);
+            systemLogsService.save(msg + " : => " + ticketsDto, eventUser, "1");
+            return ResponseEntity.ok(new MessageResponse(msg));
         } catch (Exception e) {
             System.out.println(e.getMessage());
             systemLogsService.save("Add new ticket : Internal server error : => "+ticketsDto, eventUser, "0");

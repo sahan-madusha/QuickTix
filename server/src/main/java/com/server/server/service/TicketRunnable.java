@@ -45,13 +45,15 @@ public class TicketRunnable implements Runnable {
         Events eventData = eventRepository.findById(ticketsDto.getEventId()).orElse(null);
 
         if (eventUser != null && eventData != null) {
-            Tickets ticketEntity = new Tickets();
+            Tickets ticketEntity = ticketsRepository.findById(ticketsDto.getId()).orElse(new Tickets());
             ticketEntity.setName(ticketsDto.getName());
             ticketEntity.setPrice(ticketsDto.getPrice());
             ticketEntity.setDescription(ticketsDto.getDescription());
             ticketEntity.setEvent(eventData);
             ticketEntity.setUser(eventUser);
             ticketEntity.setQty(ticketsDto.getQty());
+
+            //add or save
             ticketsRepository.save(ticketEntity);
 
             addTicketLog(ticketEntity, eventUser, eventData, ticketsDto.getQty());
