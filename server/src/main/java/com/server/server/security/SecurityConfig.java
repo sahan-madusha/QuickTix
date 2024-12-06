@@ -40,7 +40,8 @@ public class SecurityConfig {
                                 "/api/event/list-events-user/{id}",
                                 "/api/event/{id}",
                                 "/api/getsystemlogs",
-                                "/api/stats").permitAll()
+                                "/api/stats",
+                                "/api/ticket/add").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

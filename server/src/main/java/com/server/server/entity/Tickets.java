@@ -18,9 +18,16 @@ public class Tickets {
     private float price;
 
     @Column(name = "description", columnDefinition = "TEXT")
-    private String description;  // LONGTEXT in DB, mapped to String
+    private String description;
+
+    @Column(name = "qty")
+    private int qty;
 
     @ManyToOne
-    @JoinColumn(name = "events_id", nullable = false)
+    @JoinColumn(name = "events_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_tickets_events1"))
     private Events event;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_events_users"))
+    private User user;
 }
