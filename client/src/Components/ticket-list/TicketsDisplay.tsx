@@ -16,7 +16,6 @@ export const TicketsDisplay = ({
   selectedEvent?:any
 }) => {
   const { user, isAuthenticated } = useAuthContext();
-console.log("selectedEvent::::",selectedEvent);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 px-5">

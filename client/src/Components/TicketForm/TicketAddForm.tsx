@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { TicketsDisplay } from "../../Components";
-import { AddUpdateEventData } from "../../Api";
+import { AddUpdateEventData, GetEventData } from "../../Api";
 import { useAuthContext } from "../../Context";
 import { toast } from "react-toastify";
 
@@ -21,6 +21,7 @@ export const TicketAddForm = (selectedEvent: any) => {
   const [loading, setLoading] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<any>();
   const { user } = useAuthContext();
+  const [selectedEventData , setSelectedEventData] = useState<any>();
 
   const showModal = (isUdateTicketParam) => {
     setIsUpdateTicket(isUdateTicketParam);
@@ -32,21 +33,24 @@ export const TicketAddForm = (selectedEvent: any) => {
     try {
       let req = {
         ...values,
-        eventId: selectedEvent?.selectedEvent?.id,
+        eventId: selectedEventData?.id,
         userId: user?.userId,
       };
       if (selectedTicket?.id) {
         req = { ...req, id: selectedTicket.id };
       }
       const res = await AddUpdateEventData(req);
+      const data = await GetEventData(selectedEventData?.id);
+      setSelectedEventData(data)
       toast.success(res.message);
       setIsModalVisible(false);
-      form.resetFields();
     } catch (error) {
       toast.success("Somthing went wrong");
       console.log(error);
     }finally{
       setLoading(false);
+      form.resetFields();
+      setSelectedTicket('')
     }
   };
 
@@ -61,15 +65,17 @@ export const TicketAddForm = (selectedEvent: any) => {
     } else {
       form.resetFields();
     }
-  }, [selectedTicket, form]);
+
+    setSelectedEventData(selectedEvent?.selectedEvent)    
+  }, [selectedTicket, form,selectedEvent]);
 
   return (
     <div className="flex flex-col justify-center pt-5 min-h-screen ">
       <TicketsDisplay
-        tickets={selectedEvent?.selectedEvent?.tickets ?? []}
+        tickets={selectedEventData?.tickets ?? []}
         showModal={showModal}
         setSelectedTicket={setSelectedTicket}
-        selectedEvent={selectedEvent?.selectedEvent}
+        selectedEvent={selectedEventData}
       />
 
       <Modal

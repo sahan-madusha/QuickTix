@@ -27,7 +27,8 @@ interface AuthContextType {
   user: User;
   limitations: Config;
   systemLogs: any;
-  isEventUpdated:any
+  isEventUpdated:any;
+  tickets:any;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -46,6 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [limitations, setLimitations] = useState<Config>();
   const [systemLogs, setSystemLogs] = useState([]);
   const [isEventUpdated , setEventUpdated] = useState<any>()
+  const [tickets , setTickets] = useState<any>()
 
   const decodeToken = (token: string) => {
     if (typeof token !== "string" || !token.trim()) {
@@ -120,26 +122,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       onConnect: () => {
         client.subscribe("/topic/configUpdates", (message) => {
           const updatedConfig = JSON.parse(message.body);
-          // console.log(updatedConfig);
-
           setLimitations(updatedConfig);
         });
 
         client.subscribe("/topic/savedEvent", (message) => {
           const savedEvent = JSON.parse(message.body);
           setEventUpdated(savedEvent)
-          // console.log(savedEvent);
         });
 
         client.subscribe("/topic/updateEvent", (message) => {
           const updateEvent = JSON.parse(message.body);
           setEventUpdated(updateEvent)
-          console.log("updateEvent:::::::::::",updateEvent);
         });
 
         client.subscribe("/topic/systemlogs", (message) => {
           const systemLogs = JSON.parse(message.body);
-          // setSystemLogs(systemLogs);
+          setSystemLogs(systemLogs);
+        });
+        client.subscribe("/topic/tickets", (message) => {
+          const tic = JSON.parse(message.body);
+          setTickets(tic);
         });
       },
       debug: (str) => {
@@ -164,6 +166,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         user,
         limitations,
         systemLogs,
+        tickets,
       }}
     >
       {children}
