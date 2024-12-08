@@ -13,6 +13,7 @@ import com.server.server.util.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +28,14 @@ public class TicketsController {
     private final UserRepository userRepository;
     private final SystemLogsService systemLogsService;
     private final TicketsRepository ticketsRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public TicketsController(TicketService ticketService, UserRepository userRepository, SystemLogsService systemLogsService, TicketsRepository ticketsRepository) {
+    public TicketsController(TicketService ticketService, UserRepository userRepository, SystemLogsService systemLogsService, TicketsRepository ticketsRepository, SimpMessagingTemplate messagingTemplate) {
         this.ticketService = ticketService;
         this.userRepository = userRepository;
         this.systemLogsService = systemLogsService;
         this.ticketsRepository = ticketsRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public boolean doesTicketExist(TicketsDto ticketsDto) {
@@ -53,9 +56,8 @@ public class TicketsController {
             if (ticketIsExists) {
                 msg = "Ticket Updated successfully";
             }
-
-            ticketService.addOrUpdateTicket(ticketsDto);
             systemLogsService.save(msg + " : => " + ticketsDto, eventUser, "1");
+            messagingTemplate.convertAndSend("/topic/tickets", ticketsDto);
             return ResponseEntity.ok(new MessageResponse(msg));
         } catch (Exception e) {
             System.out.println(e.getMessage());
