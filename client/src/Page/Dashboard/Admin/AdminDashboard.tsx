@@ -6,6 +6,7 @@ import { DashboardOutlined, InteractionOutlined } from "@ant-design/icons";
 import { ExistingEvent } from "../../../Components";
 import { AppConfig, Dashboard, SystemLogs } from "./common";
 import { GetEventData } from "../../../Api";
+import { BookTicket } from "../../Book-ticket/BookTicket";
 
 export const AdminDashboard = () => {
   const [selectedNav, setSelectedNav] = useState(UserUiEnum.dashboard);
@@ -119,10 +120,7 @@ export const AdminDashboard = () => {
             )}
             {selectedNav === UserUiEnum.addevent && (
               <>
-                <ExistingEvent
-                  isEventFetch={isEventFetch}
-                  onEventClick={handleEventClick}
-                />
+                <BookTicket/>
               </>
             )}
           </div>

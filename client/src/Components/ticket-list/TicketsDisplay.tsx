@@ -1,8 +1,15 @@
-import React from "react";
-import { Card, Row, Col, Button, Tag } from "antd";
-import { UpCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Card, Row, Col, Button, Tag, Input } from "antd";
+import {
+  UpCircleOutlined,
+  PlusCircleOutlined,
+  CalendarOutlined,
+  ClockCircleOutlined,
+  EnvironmentOutlined,
+} from "@ant-design/icons";
 import { useAuthContext } from "../../Context";
-import { UserRolesEnum } from "../../Constant";
+import { IMAGE_URL, UserRolesEnum } from "../../Constant";
+import { toast } from "react-toastify";
 
 export const TicketsDisplay = ({
   tickets,
@@ -13,18 +20,87 @@ export const TicketsDisplay = ({
   tickets: any[];
   showModal?: any;
   setSelectedTicket?: any;
-  selectedEvent?:any
+  selectedEvent?: any;
 }) => {
   const { user, isAuthenticated } = useAuthContext();
+  const [isBtnDisable, setIsBtnDisabled] = useState(true);
+  const [updatedTicketId, setUpdatedTicketId] = useState<number | null>(null);
+
+  //data
+  const [ticketQty, setTicketQty] = useState<number>(0);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
+
+  const handleTicketQty = (
+    maxQty: number,
+    enteredQty: string,
+    ticketId: number,
+    price: number
+  ) => {
+    const data = parseInt(enteredQty, 10);
+
+    if (isNaN(data) || data === 0 || data > maxQty) {
+      toast.warn("Invalid inputs. Please enter a valid ticket quantity.");
+      setIsBtnDisabled(true);
+      setTotalAmount(0);
+    } else {
+      setIsBtnDisabled(false);
+      setTicketQty(data);
+      setTotalAmount(price * data);
+      setUpdatedTicketId(ticketId);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 px-5">
-      <h2 className="text-3xl font-bold text-center text-blue-600 mb-10">
-        Available Tickets 🎟️
-      </h2>
+      {selectedEvent && (
+        <>
+          <Card className="mb-3 shadow-lg">
+            <div className="flex">
+              <div>
+                <img
+                  alt={selectedEvent?.name}
+                  src={`${IMAGE_URL}/${selectedEvent?.image}`}
+                  className="object-cover h-56 w-full"
+                />
+              </div>
+              <div className="ms-3">
+                <h2 className="text-xl font-bold mb-2 text-gray-800">
+                  {selectedEvent?.name}
+                </h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  {selectedEvent?.description}
+                </p>
+                <div className="flex items-center space-x-2 mb-4">
+                  <Tag icon={<CalendarOutlined />} color="blue">
+                    {selectedEvent?.date}
+                  </Tag>
+                  <Tag icon={<ClockCircleOutlined />} color="green">
+                    {selectedEvent?.time}
+                  </Tag>
+                </div>
+                <div className="flex items-center mb-4">
+                  <EnvironmentOutlined className="mr-2 text-red-500" />
+                  <a
+                    href={selectedEvent?.location}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    View Location
+                  </a>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <h2 className="text-3xl mt-5 font-bold text-center text-blue-600 mb-10">
+            Available Tickets 🎟️
+          </h2>
+        </>
+      )}
 
       <Row gutter={[16, 16]} justify="center">
-        {user.userRole === UserRolesEnum.vendor && selectedEvent &&(
+        {user.userRole === UserRolesEnum.vendor && selectedEvent && (
           <Card
             hoverable
             className="shadow-lg rounded-xl align-middle justify-center transform transition-transform hover:scale-105"
@@ -47,7 +123,7 @@ export const TicketsDisplay = ({
           </Card>
         )}
 
-        {tickets.length > 0 &&
+        {tickets.length > 0 ? (
           tickets.map((ticket) => (
             <Col xs={24} md={8} key={ticket.id}>
               <Card
@@ -95,13 +171,38 @@ export const TicketsDisplay = ({
                   )}
                   {isAuthenticated &&
                     user.userRole === UserRolesEnum.customer && (
-                      <Button
-                        type="primary"
-                        icon={<UpCircleOutlined />}
-                        className="w-full rounded-lg bg-blue-600 hover:bg-blue-500"
-                      >
-                        Buy Now
-                      </Button>
+                      <>
+                        <Input
+                          placeholder="Enter ticket qty you buy"
+                          className="rounded-lg"
+                          size="middle"
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            handleTicketQty(
+                              ticket.qty,
+                              e.target.value,
+                              ticket.id,
+                              ticket.price
+                            );
+                          }}
+                        />
+                        <p className="my-3">
+                          {updatedTicketId == ticket.id && totalAmount > 0 && (
+                            <span>Total Amount Rs: {totalAmount}.00</span>
+                          )}
+                        </p>
+                        <Button
+                          type="primary"
+                          icon={<UpCircleOutlined />}
+                          disabled={
+                            isBtnDisable || updatedTicketId !== ticket.id
+                          }
+                          className="w-full rounded-lg bg-blue-600 hover:bg-blue-500"
+                        >
+                          Buy Now
+                        </Button>
+                      </>
                     )}
 
                   {!isAuthenticated && (
@@ -116,7 +217,10 @@ export const TicketsDisplay = ({
                 </div>
               </Card>
             </Col>
-          ))}
+          ))
+        ) : (
+          <p>No tickets available</p>
+        )}
       </Row>
     </div>
   );

@@ -20,8 +20,8 @@ export const TicketAddForm = (selectedEvent: any) => {
   const [isUpdateTicket, setIsUpdateTicket] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<any>();
-  const { user } = useAuthContext();
-  const [selectedEventData , setSelectedEventData] = useState<any>();
+  const { user , isEventUpdated } = useAuthContext();
+  const [selectedEventData, setSelectedEventData] = useState<any>();
 
   const showModal = (isUdateTicketParam) => {
     setIsUpdateTicket(isUdateTicketParam);
@@ -41,16 +41,16 @@ export const TicketAddForm = (selectedEvent: any) => {
       }
       const res = await AddUpdateEventData(req);
       const data = await GetEventData(selectedEventData?.id);
-      setSelectedEventData(data)
+      setSelectedEventData(data);
       toast.success(res.message);
       setIsModalVisible(false);
     } catch (error) {
       toast.success("Somthing went wrong");
       console.log(error);
-    }finally{
+    } finally {
       setLoading(false);
       form.resetFields();
-      setSelectedTicket('')
+      setSelectedTicket("");
     }
   };
 
@@ -66,8 +66,8 @@ export const TicketAddForm = (selectedEvent: any) => {
       form.resetFields();
     }
 
-    setSelectedEventData(selectedEvent?.selectedEvent)    
-  }, [selectedTicket, form,selectedEvent]);
+    setSelectedEventData(selectedEvent?.selectedEvent);
+  }, [selectedTicket, form, selectedEvent , isEventUpdated]);
 
   return (
     <div className="flex flex-col justify-center pt-5 min-h-screen ">
