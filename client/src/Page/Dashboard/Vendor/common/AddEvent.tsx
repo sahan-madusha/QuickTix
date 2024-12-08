@@ -15,7 +15,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { AddEventData, GetEventData, UpdateEventData } from "../../../../Api";
 import { IMAGE_URL } from "../../../../Constant";
 import moment from "moment";
-import { ExistingEvent } from "./ExistingEvent";
+import { ExistingEvent } from "../../../../Components";
 import { useAuthContext } from "../../../../Context";
 
 const { TextArea } = Input;

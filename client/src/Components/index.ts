@@ -1,3 +1,6 @@
 export * from './ScrollUpButton/ScrollUpButton'
 export * from './Nav-bar/Nav-Bar'
 export * from './footer/Footer'
+export * from './event-list/ExistingEvent'
+export * from './ticket-list/TicketsDisplay'
+export * from './TicketForm/TicketAddForm'
