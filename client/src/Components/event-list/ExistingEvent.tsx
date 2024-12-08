@@ -33,7 +33,7 @@ export const ExistingEvent: React.FC<ExistingEventProps> = ({
   };
 
   useEffect(() => {
-    fetchEvents();
+    fetchEvents();    
   }, [isEventFetch, isEventUpdated]);
 
   return (

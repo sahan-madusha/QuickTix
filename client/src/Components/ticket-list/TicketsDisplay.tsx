@@ -8,12 +8,15 @@ export const TicketsDisplay = ({
   tickets,
   showModal,
   setSelectedTicket,
+  selectedEvent,
 }: {
   tickets: any[];
   showModal?: any;
   setSelectedTicket?: any;
+  selectedEvent?:any
 }) => {
   const { user, isAuthenticated } = useAuthContext();
+console.log("selectedEvent::::",selectedEvent);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 px-5">
@@ -22,7 +25,7 @@ export const TicketsDisplay = ({
       </h2>
 
       <Row gutter={[16, 16]} justify="center">
-        {user.userRole === UserRolesEnum.vendor && (
+        {user.userRole === UserRolesEnum.vendor && selectedEvent &&(
           <Card
             hoverable
             className="shadow-lg rounded-xl align-middle justify-center transform transition-transform hover:scale-105"

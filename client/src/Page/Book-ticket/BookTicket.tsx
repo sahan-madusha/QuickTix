@@ -22,7 +22,7 @@ export const BookTicket = () => {
     <>
       <div className="flex justify-between">
         <div className="w-1/2 px-5">
-          <TicketAddForm selectedEvent= {selectedEvent}/>
+          <TicketAddForm selectedEvent = {selectedEvent}/>
         </div>
         <div className="w-1/2">
           {" "}

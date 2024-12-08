@@ -10,6 +10,9 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { TicketsDisplay } from "../../Components";
+import { AddUpdateEventData } from "../../Api";
+import { useAuthContext } from "../../Context";
+import { toast } from "react-toastify";
 
 export const TicketAddForm = (selectedEvent: any) => {
   const [form] = Form.useForm();
@@ -17,6 +20,7 @@ export const TicketAddForm = (selectedEvent: any) => {
   const [isUpdateTicket, setIsUpdateTicket] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<any>();
+  const { user } = useAuthContext();
 
   const showModal = (isUdateTicketParam) => {
     setIsUpdateTicket(isUdateTicketParam);
@@ -26,21 +30,23 @@ export const TicketAddForm = (selectedEvent: any) => {
   const handleSubmit = async (values: any) => {
     setLoading(true);
     try {
-      console.log(values);
-      setTimeout(() => {
-        setLoading(false);
-        notification.success({
-          message: "Success 🎉",
-          description: "Your ticket has been added successfully!",
-        });
-        form.resetFields();
-      }, 1000);
+      let req = {
+        ...values,
+        eventId: selectedEvent?.selectedEvent?.id,
+        userId: user?.userId,
+      };
+      if (selectedTicket?.id) {
+        req = { ...req, id: selectedTicket.id };
+      }
+      const res = await AddUpdateEventData(req);
+      toast.success(res.message);
+      setIsModalVisible(false);
+      form.resetFields();
     } catch (error) {
+      toast.success("Somthing went wrong");
+      console.log(error);
+    }finally{
       setLoading(false);
-      notification.error({
-        message: "Error ❌",
-        description: "Failed to add the ticket. Please try again.",
-      });
     }
   };
 
@@ -63,6 +69,7 @@ export const TicketAddForm = (selectedEvent: any) => {
         tickets={selectedEvent?.selectedEvent?.tickets ?? []}
         showModal={showModal}
         setSelectedTicket={setSelectedTicket}
+        selectedEvent={selectedEvent?.selectedEvent}
       />
 
       <Modal
@@ -75,7 +82,7 @@ export const TicketAddForm = (selectedEvent: any) => {
         onCancel={() => {
           form.resetFields();
           setIsModalVisible(false);
-          setSelectedTicket(false)
+          setSelectedTicket(false);
         }}
         footer={null}
         onClose={() => {}}
