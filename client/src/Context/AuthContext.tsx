@@ -15,8 +15,10 @@ interface Config {
   id: number;
   vendorLimitation: number;
   customerLimitation: number;
-  type: string;
+  status: any;
   lastUpdate: string;
+  totalTicketCount:number;
+  maximumTicketCountEvent:number
 }
 
 interface AuthContextType {
@@ -111,6 +113,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchConfData = async () => {
     const configdata = await fetchConfigData(1);
+    console.log("config data ::::::",configdata);
+    
     setLimitations(configdata);
   };
 

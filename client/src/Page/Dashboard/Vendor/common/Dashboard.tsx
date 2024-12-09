@@ -67,7 +67,6 @@ export const Dashboard = () => {
                     <Text type="secondary">Last updated: {formattedDate}</Text>
                     <div>
                       <Text strong>{limitations?.vendorLimitation}</Text>
-                      <span> Per {limitations?.type}</span>
                     </div>
                   </div>
                 </Card>
@@ -85,10 +84,6 @@ export const Dashboard = () => {
                     <Text type="secondary">Last updated: {formattedDate}</Text>
                     <div>
                       <Text strong>{limitations?.customerLimitation}</Text>
-                      <span className="capitalize">
-                        {" "}
-                        Per {limitations?.type}
-                      </span>
                     </div>
                   </div>
                 </Card>

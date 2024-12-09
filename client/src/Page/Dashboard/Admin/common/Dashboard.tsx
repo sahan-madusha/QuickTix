@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { useAuthContext } from "../../../../Context";
-import { Card, Col, Row, Typography } from "antd";
+import { Row, Typography } from "antd";
 import { GetAppStats } from "../../../../Api";
 import { SystemLogs } from "./Systemlogs";
+import { ConfigUI } from "../../../../Components";
 
 const { Text } = Typography;
 
@@ -39,63 +40,25 @@ export const Dashboard = () => {
     <>
       <div>
         <div className="flex items-start">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {statsList.map((stat, index) => (
-              <div
-                key={index}
-                className={`rounded-lg shadow-md p-6 text-white ${stat.bgColor}`}
-              >
-                <h2 className="text-lg font-semibold">{stat.title}</h2>
-                <p className="text-3xl font-bold mt-2">{stat.value}</p>
-              </div>
-            ))}
+          <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 ">
+              {statsList.map((stat, index) => (
+                <div
+                  key={index}
+                  className={`rounded-lg shadow-md p-6 text-white ${stat.bgColor}`}
+                >
+                  <h2 className="text-lg font-semibold">{stat.title}</h2>
+                  <p className="text-3xl font-bold mt-2">{stat.value}</p>
+                </div>
+              ))}
+            </div>
+            <div className=" w-[50vw] mt-3 h-[45vh] overflow-scroll">
+              <SystemLogs />
+            </div>
           </div>
           <div className="mx-1">
-            <Row gutter={[16, 16]}>
-              {/* Vendor Limitation 1 */}
-              <Col span={12}>
-                <Card
-                  title="Vendor Ticket Adding Limitation"
-                  bordered
-                  hoverable
-                  className="shadow-lg"
-                >
-                  <div className="flex flex-col gap-y-2 justify-between items-center">
-                    <Text type="secondary">Last updated: {formattedDate}</Text>
-                    <div>
-                      <Text strong>{limitations?.vendorLimitation}</Text>
-                      <span> Per {limitations?.type}</span>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-
-              {/* Vendor Limitation 2 */}
-              <Col span={12}>
-                <Card
-                  title="Customer Ticket buying Limitation"
-                  bordered
-                  hoverable
-                  className="shadow-lg"
-                >
-                  <div className="flex flex-col gap-y-2 justify-between items-center">
-                    <Text type="secondary">Last updated: {formattedDate}</Text>
-                    <div>
-                      <Text strong>{limitations?.customerLimitation}</Text>
-                      <span className="capitalize">
-                        {" "}
-                        Per {limitations?.type}
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-            </Row>
+            <ConfigUI config={limitations} />
           </div>
-        </div>
-
-        <div className=" w-[175vh] h-[40vh] overflow-scroll">
-          <SystemLogs />
         </div>
       </div>
     </>
