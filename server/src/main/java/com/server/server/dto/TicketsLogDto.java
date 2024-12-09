@@ -22,4 +22,5 @@ public class TicketsLogDto {
     private User user;
     private Event event;
     private Tickets ticket;
+    private String totalAmount;
 }

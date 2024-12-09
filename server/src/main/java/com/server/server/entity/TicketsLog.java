@@ -26,6 +26,9 @@ public class TicketsLog {
     @Column(name = "time")
     private LocalTime time;
 
+    @Column(name = "total_amount" , nullable = false)
+    private String totalAmount;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private Role userRole;

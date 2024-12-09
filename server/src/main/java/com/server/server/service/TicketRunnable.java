@@ -77,6 +77,11 @@ public class TicketRunnable implements Runnable {
     }
 
     @Async
+    /*{
+      "id": 41,
+      "userId": 38,
+      "qty": 10
+    }*/
     public void purchaseTicket() {
         Tickets ticket = ticketsRepository.findById(ticketsDto.getId()).orElse(null);
         User user = userRepository.findById(ticketsDto.getUserId()).orElse(null);
@@ -91,6 +96,14 @@ public class TicketRunnable implements Runnable {
     }
 
     @Async
+    /* {
+      "name": "string",
+      "price": 50,
+      "description": "string",
+      "eventId": 32,
+      "userId": 37,
+      "qty": 100
+    }*/
     public void addTicketLog(Tickets ticketEntity, User user, Events event, int qty) {
         TicketsLog ticketsLog = new TicketsLog();
         ticketsLog.setCount(qty);
@@ -100,6 +113,8 @@ public class TicketRunnable implements Runnable {
         ticketsLog.setUser(user);
         ticketsLog.setEvent(event);
         ticketsLog.setTicket(ticketEntity);
+        ticketsLog.setTotalAmount(String.valueOf(qty * ticketEntity.getPrice()));
+
         ticketsLogRepository.save(ticketsLog);
     }
 }
