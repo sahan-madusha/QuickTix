@@ -22,3 +22,8 @@ export enum UserUiEnum {
   systemlogs = "SYSTEMLOGS",
   addticket = "ADDTICKETS"
 }
+
+export enum systemStatus {
+  active = "active",
+  inactive = "inactive"
+}
