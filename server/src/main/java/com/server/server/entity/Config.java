@@ -1,6 +1,5 @@
 package com.server.server.entity;
 
-import com.server.server.enums.TicketLimitationType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,9 +19,14 @@ public class Config {
     @Column(name = "customer_limitation", nullable = true)
     private Integer customerLimitation;
 
-    @Column(name = "type", nullable = true)
-    @Enumerated(EnumType.STRING)
-    private TicketLimitationType type;
+    @Column(name = "status", nullable = true)
+    private String status;
+
+    @Column(name = "total_ticket_count", nullable = true)
+    private Integer totalTicketCount;
+
+    @Column(name = "maximum_ticket_count_event", nullable = true)
+    private Integer maximumTicketCountEvent;
 
     @Column(name = "lastupdate", nullable = true)
     private LocalDateTime lastUpdate;

@@ -75,9 +75,6 @@ public class TicketRunnable implements Runnable {
             //add or save
             ticketsRepository.save(ticketEntity);
 
-            System.out.println(ticketEntity.getId());
-
-
             TicketAction action = (isExisting)
                     ? TicketAction.UPDATE
                     : TicketAction.ADD;

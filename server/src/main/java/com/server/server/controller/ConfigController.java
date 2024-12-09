@@ -44,11 +44,13 @@ public class ConfigController {
 
             existingConfig.setVendorLimitation(configDto.getVendorLimitation());
             existingConfig.setCustomerLimitation(configDto.getCustomerLimitation());
-            existingConfig.setType(configDto.getType());
+            existingConfig.setStatus(configDto.getStatus());
+            existingConfig.setTotalTicketCount(configDto.getTotalTicketCount());
+            existingConfig.setMaximumTicketCountEvent(configDto.getMaximumTicketCountEvent());
             existingConfig.setLastUpdate(LocalDateTime.now());
 
             Config updatedConfig = configService.updateConfig(existingConfig);
-            systemLogsService.save("Update configuration data => Vendor limitation : " + configDto.getVendorLimitation() +"Customer limitation :"+configDto.getCustomerLimitation() + "Type :"+configDto.getType(), adminUser , "1");
+            systemLogsService.save("Update configuration data => : " + configDto , adminUser , "1");
 
             messagingTemplate.convertAndSend("/topic/configUpdates", updatedConfig);
             return ResponseEntity.ok(new MessageResponse( "Config successfully"));
