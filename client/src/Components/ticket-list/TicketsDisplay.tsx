@@ -10,6 +10,7 @@ import {
 import { useAuthContext } from "../../Context";
 import { IMAGE_URL, UserRolesEnum } from "../../Constant";
 import { toast } from "react-toastify";
+import { TicketPurchase } from "../../Api";
 
 export const TicketsDisplay = ({
   tickets,
@@ -47,6 +48,21 @@ export const TicketsDisplay = ({
       setTicketQty(data);
       setTotalAmount(price * data);
       setUpdatedTicketId(ticketId);
+    }
+  };
+
+  const handleTicketPurchase = async (ticketId: any) => {
+    const req = {
+      id: ticketId,
+      userId: user.userId,
+      qty: ticketQty,
+    };
+
+    try {
+      const res = await TicketPurchase(req);
+      toast.success(res.message);
+    } catch (error) {
+      toast.success("Somthing went wrong!");
     }
   };
 
@@ -198,6 +214,9 @@ export const TicketsDisplay = ({
                           disabled={
                             isBtnDisable || updatedTicketId !== ticket.id
                           }
+                          onClick={() => {
+                            handleTicketPurchase(ticket.id);
+                          }}
                           className="w-full rounded-lg bg-blue-600 hover:bg-blue-500"
                         >
                           Buy Now
