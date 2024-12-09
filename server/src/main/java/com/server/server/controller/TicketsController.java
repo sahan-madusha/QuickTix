@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/ticket")
 @Tag(name = "Ticket", description = "Endpoints for ticket")
@@ -65,5 +67,38 @@ public class TicketsController {
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
     }
+
+    // Purchase ticket
+    @PostMapping("/purchase")
+    @Operation(summary = "Purchase ticket")
+    public ResponseEntity<?> purchaseTickets(@RequestBody TicketsDto ticketsDto) {
+        Optional<Tickets> optionalTicket = ticketsRepository.findById(ticketsDto.getId());
+        User eventUser = userRepository.findById(ticketsDto.getUserId()).get();
+
+        if (!optionalTicket.isPresent()) {
+            systemLogsService.save("Ticket not found : Internal server error : => "+ticketsDto, eventUser, "0");
+            return ResponseEntity.status(404).body(new MessageResponse("Ticket not found"));
+        }
+
+        Tickets ticket = optionalTicket.get();
+
+        if (ticket.getQty() < ticketsDto.getQty()) {
+            systemLogsService.save("Insufficient ticket quantity : Internal server error : => "+ticketsDto, eventUser, "0");
+            return ResponseEntity.badRequest().body(new MessageResponse("Insufficient ticket quantity"));
+        }
+
+        ticket.setQty(ticket.getQty() - ticketsDto.getQty());
+
+        try {
+            ticketsRepository.save(ticket);
+            messagingTemplate.convertAndSend("/topic/tickets", ticketsDto);
+            systemLogsService.save("Ticket purchased successfully: " + ticketsDto, eventUser, "1");
+            return ResponseEntity.ok(new MessageResponse("Ticket purchased successfully"));
+        } catch (Exception e) {
+            systemLogsService.save("Purchase ticket: Internal server error: : => "+ticketsDto, eventUser, "0");
+            return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
+        }
+    }
+
 
 }
