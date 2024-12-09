@@ -8,4 +8,7 @@ import java.util.List;
 @Repository
 public interface TicketsRepository extends JpaRepository<Tickets, Integer> {
     List<Tickets> findByEventId(int eventId);
+
+    @Override
+    boolean existsById(Integer integer);
 }

@@ -1,6 +1,7 @@
 package com.server.server.entity;
 
 import com.server.server.enums.Role;
+import com.server.server.enums.TicketAction;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -32,6 +33,10 @@ public class TicketsLog {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private Role userRole;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "action")
+    private TicketAction action;
 
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)

@@ -5,6 +5,7 @@ import com.server.server.entity.Events;
 import com.server.server.entity.Tickets;
 import com.server.server.entity.TicketsLog;
 import com.server.server.entity.User;
+import com.server.server.enums.TicketAction;
 import com.server.server.repository.EventRepository;
 import com.server.server.repository.TicketsLogRepository;
 import com.server.server.repository.TicketsRepository;
@@ -61,6 +62,8 @@ public class TicketRunnable implements Runnable {
         Events eventData = eventRepository.findById(ticketsDto.getEventId()).orElse(null);
 
         if (eventUser != null && eventData != null) {
+            boolean isExisting = ticketsRepository.existsById(ticketsDto.getId());
+
             Tickets ticketEntity = ticketsRepository.findById(ticketsDto.getId()).orElse(new Tickets());
             ticketEntity.setName(ticketsDto.getName());
             ticketEntity.setPrice(ticketsDto.getPrice());
@@ -72,7 +75,14 @@ public class TicketRunnable implements Runnable {
             //add or save
             ticketsRepository.save(ticketEntity);
 
-            addTicketLog(ticketEntity, eventUser, eventData, ticketsDto.getQty());
+            System.out.println(ticketEntity.getId());
+
+
+            TicketAction action = (isExisting)
+                    ? TicketAction.UPDATE
+                    : TicketAction.ADD;
+
+            addTicketLog(ticketEntity, eventUser, eventData, ticketsDto.getQty() , action);
         }
     }
 
@@ -92,7 +102,7 @@ public class TicketRunnable implements Runnable {
 
         ticket.setQty(ticket.getQty() - ticketsDto.getQty());
         ticketsRepository.save(ticket);
-        addTicketLog(ticket, user, ticket.getEvent(), ticketsDto.getQty());
+        addTicketLog(ticket, user, ticket.getEvent(), ticketsDto.getQty() , TicketAction.PURCHASE);
     }
 
     @Async
@@ -104,7 +114,7 @@ public class TicketRunnable implements Runnable {
       "userId": 37,
       "qty": 100
     }*/
-    public void addTicketLog(Tickets ticketEntity, User user, Events event, int qty) {
+    public void addTicketLog(Tickets ticketEntity, User user, Events event, int qty , TicketAction ticketAction) {
         TicketsLog ticketsLog = new TicketsLog();
         ticketsLog.setCount(qty);
         ticketsLog.setDate(LocalDate.now());
@@ -114,6 +124,7 @@ public class TicketRunnable implements Runnable {
         ticketsLog.setEvent(event);
         ticketsLog.setTicket(ticketEntity);
         ticketsLog.setTotalAmount(String.valueOf(qty * ticketEntity.getPrice()));
+        ticketsLog.setAction(ticketAction);
 
         ticketsLogRepository.save(ticketsLog);
     }

@@ -3,6 +3,7 @@ package com.server.server.dto;
 import com.server.server.entity.Tickets;
 import com.server.server.entity.User;
 import com.server.server.enums.Role;
+import com.server.server.enums.TicketAction;
 import jdk.jfr.Event;
 import lombok.Data;
 
@@ -23,4 +24,5 @@ public class TicketsLogDto {
     private Event event;
     private Tickets ticket;
     private String totalAmount;
+    private TicketAction action;
 }
