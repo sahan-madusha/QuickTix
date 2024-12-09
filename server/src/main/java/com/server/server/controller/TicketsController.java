@@ -52,7 +52,7 @@ public class TicketsController {
         boolean ticketIsExists = doesTicketExist(ticketsDto);
 
         try {
-            ticketService.addOrUpdateTicket(ticketsDto);
+            ticketService.executeTicketOperation(ticketsDto , "add_or_update");
             String msg = "Ticket Added successfully";
 
             if (ticketIsExists) {
@@ -90,7 +90,7 @@ public class TicketsController {
         ticket.setQty(ticket.getQty() - ticketsDto.getQty());
 
         try {
-            ticketsRepository.save(ticket);
+            ticketService.executeTicketOperation(ticketsDto,"purchase");
             messagingTemplate.convertAndSend("/topic/tickets", ticketsDto);
             systemLogsService.save("Ticket purchased successfully: " + ticketsDto, eventUser, "1");
             return ResponseEntity.ok(new MessageResponse("Ticket purchased successfully"));

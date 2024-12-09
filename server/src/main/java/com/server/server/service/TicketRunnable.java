@@ -23,16 +23,18 @@ import java.time.LocalTime;
 public class TicketRunnable implements Runnable {
 
     private final TicketsDto ticketsDto;
+    private final String operationType;
 
     private final TicketsRepository ticketsRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final TicketsLogRepository ticketsLogRepository;
 
-    public TicketRunnable(TicketsDto ticketsDto, TicketsRepository ticketsRepository,
+    public TicketRunnable(TicketsDto ticketsDto, String operationType, TicketsRepository ticketsRepository,
                           UserRepository userRepository, EventRepository eventRepository,
                           TicketsLogRepository ticketsLogRepository) {
         this.ticketsDto = ticketsDto;
+        this.operationType = operationType;
         this.ticketsRepository = ticketsRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
@@ -41,6 +43,20 @@ public class TicketRunnable implements Runnable {
 
     @Override
     public void run() {
+        switch (operationType.toLowerCase()) {
+            case "add_or_update":
+                addOrUpdateTicket();
+                break;
+            case "purchase":
+                purchaseTicket();
+                break;
+            default:
+                System.out.println("Invalid operation type: " + operationType);
+        }
+    }
+
+    @Async
+    public void addOrUpdateTicket() {
         User eventUser = userRepository.findById(ticketsDto.getUserId()).orElse(null);
         Events eventData = eventRepository.findById(ticketsDto.getEventId()).orElse(null);
 
@@ -58,6 +74,20 @@ public class TicketRunnable implements Runnable {
 
             addTicketLog(ticketEntity, eventUser, eventData, ticketsDto.getQty());
         }
+    }
+
+    @Async
+    public void purchaseTicket() {
+        Tickets ticket = ticketsRepository.findById(ticketsDto.getId()).orElse(null);
+        User user = userRepository.findById(ticketsDto.getUserId()).orElse(null);
+
+        if (ticket == null || user == null || ticket.getQty() < ticketsDto.getQty()) {
+            return;
+        }
+
+        ticket.setQty(ticket.getQty() - ticketsDto.getQty());
+        ticketsRepository.save(ticket);
+        addTicketLog(ticket, user, ticket.getEvent(), ticketsDto.getQty());
     }
 
     @Async
