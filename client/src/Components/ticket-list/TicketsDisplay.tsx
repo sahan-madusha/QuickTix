@@ -63,6 +63,11 @@ export const TicketsDisplay = ({
       toast.success(res.message);
     } catch (error) {
       toast.success("Somthing went wrong!");
+    }finally{
+      setIsBtnDisabled(true);
+      setTicketQty(0);
+      setTotalAmount(0);
+      setUpdatedTicketId(null);
     }
   };
 

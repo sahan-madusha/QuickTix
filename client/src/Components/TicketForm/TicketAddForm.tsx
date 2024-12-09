@@ -33,6 +33,7 @@ export const TicketAddForm = (selectedEvent: any) => {
     try {
       let req = {
         ...values,
+        id:0,
         eventId: selectedEventData?.id,
         userId: user?.userId,
       };
