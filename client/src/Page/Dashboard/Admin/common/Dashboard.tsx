@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { useAuthContext } from "../../../../Context";
-import { Row, Typography } from "antd";
 import { GetAppStats } from "../../../../Api";
 import { SystemLogs } from "./Systemlogs";
 import { ConfigUI } from "../../../../Components";
 
-const { Text } = Typography;
 
 export const Dashboard = () => {
   const { limitations } = useAuthContext();
-  const formattedDate = format(new Date(limitations?.lastUpdate), "PPpp");
   const [statsList, setStatsList] = useState([
     { title: "QuickTix", value: 0, bgColor: "bg-blue-500" },
     { title: "Vendors", value: 0, bgColor: "bg-green-500" },
