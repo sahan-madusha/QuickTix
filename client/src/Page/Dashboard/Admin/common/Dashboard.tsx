@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../../../../Context";
 import { GetAppStats } from "../../../../Api";
-import { SystemLogs } from "./Systemlogs";
-import { ConfigUI } from "../../../../Components";
-
+import { Charts, ConfigUI } from "../../../../Components";
 
 export const Dashboard = () => {
-  const { limitations } = useAuthContext();
+  const { limitations, tickets, isEventUpdated } = useAuthContext();
   const [statsList, setStatsList] = useState([
     { title: "QuickTix", value: 0, bgColor: "bg-blue-500" },
     { title: "Vendors", value: 0, bgColor: "bg-green-500" },
     { title: "Customers", value: 0, bgColor: "bg-yellow-500" },
     { title: "Events", value: 0, bgColor: "bg-purple-500" },
   ]);
+  const [ticketStatus, setTicketStatus] = useState([
+    { name: "Sold", value: 0 },
+    { name: "Available", value: 0 },
+  ]);
 
   const fetchStatsData = async () => {
     const res = await GetAppStats();
     setStatsList([
-      { title: "QuickTix", value: 0, bgColor: "bg-blue-500" },
+      {
+        title: "QuickTix",
+        value: res?.totalOfAvailableTickets,
+        bgColor: "bg-blue-500",
+      },
       { title: "Vendors", value: res.totalVendors, bgColor: "bg-green-500" },
       {
         title: "Customers",
@@ -26,11 +32,26 @@ export const Dashboard = () => {
       },
       { title: "Events", value: res.totalEvents, bgColor: "bg-purple-500" },
     ]);
+
+    setTicketStatus([
+      { name: "Sold", value: res?.totalPurchasedTickets },
+      { name: "Available", value: res?.totalOfAvailableTickets },
+    ]);
+    
   };
+
+  const events = [
+    { name: "January", sales: 4000, total: 2400, available: 500 },
+    { name: "February", sales: 3000, total: 1398, available: 500 },
+    { name: "March", sales: 2000, total: 9800, available: 500 },
+    { name: "April", sales: 2780, total: 3908, available: 500 },
+    { name: "May", sales: 1890, total: 4800, available: 500 },
+    { name: "June", sales: 2390, total: 3800, available: 500 },
+  ];
 
   useEffect(() => {
     fetchStatsData();
-  }, []);
+  }, [tickets, isEventUpdated]);
 
   return (
     <>
@@ -49,7 +70,7 @@ export const Dashboard = () => {
               ))}
             </div>
             <div className=" w-[50vw] mt-3 h-[45vh] overflow-scroll">
-              <SystemLogs />
+              <Charts ticketStatus={ticketStatus} events={events} />
             </div>
           </div>
           <div className="mx-1">

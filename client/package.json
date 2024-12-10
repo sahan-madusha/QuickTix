@@ -24,6 +24,7 @@
     "react-scripts": "5.0.1",
     "react-simple-typewriter": "^5.0.1",
     "react-toastify": "^10.0.6",
+    "recharts": "^2.14.1",
     "shadcn-ui": "^0.9.3",
     "sockjs-client": "^1.6.1",
     "tailwind-merge": "^2.5.4",
