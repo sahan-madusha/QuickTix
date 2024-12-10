@@ -15,6 +15,7 @@ export const Dashboard = () => {
     { name: "Sold", value: 0 },
     { name: "Available", value: 0 },
   ]);
+  const [events , setEvents] = useState([]);
 
   const fetchStatsData = async () => {
     const res = await GetAppStats();
@@ -37,17 +38,11 @@ export const Dashboard = () => {
       { name: "Sold", value: res?.totalPurchasedTickets },
       { name: "Available", value: res?.totalOfAvailableTickets },
     ]);
-    
+
+    setEvents(res?.eventTicketDetails)
+
   };
 
-  const events = [
-    { name: "January", sales: 4000, total: 2400, available: 500 },
-    { name: "February", sales: 3000, total: 1398, available: 500 },
-    { name: "March", sales: 2000, total: 9800, available: 500 },
-    { name: "April", sales: 2780, total: 3908, available: 500 },
-    { name: "May", sales: 1890, total: 4800, available: 500 },
-    { name: "June", sales: 2390, total: 3800, available: 500 },
-  ];
 
   useEffect(() => {
     fetchStatsData();

@@ -65,7 +65,7 @@ export const Charts = ({ ticketStatus, events }: { ticketStatus: any; events: an
             <Legend />
             <Bar dataKey="sales" fill="green" />
             <Bar dataKey="available" fill="red" />
-            <Bar dataKey="total" fill="yellow" />
+            <Bar dataKey="total" fill="black" />
           </BarChart>
         </ResponsiveContainer>
       </div>
