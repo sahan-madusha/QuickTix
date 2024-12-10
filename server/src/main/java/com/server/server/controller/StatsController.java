@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,20 +32,21 @@ public class StatsController {
 
     @GetMapping
     @Operation(summary = "Fetch a admin dashboard stats")
-    public ResponseEntity<Map<String, Long>> getStats() {
+    public ResponseEntity<Map<String, Object>> getStats() {
         long totalEvents = eventService.getTotalEventCount();
         long totalVendors = userService.getTotalVendorCount();
         long totalCustomers = userService.getTotalCustomerCount();
         long totalPurchasedTickets = ticketService.getSumOfPurchasedTickets();
         long totalOfAvailableTickets = ticketService.getTotalOfAvailableTickets();
-        Map<String, Long> stats = Map.of(
-                "totalEvents", totalEvents,
-                "totalCustomers", totalCustomers,
-                "totalVendors", totalVendors,
-                "totalPurchasedTickets",totalPurchasedTickets,
-                "totalOfAvailableTickets",totalOfAvailableTickets
-        );
+        List<Map<String, Object>> eventTicketDetails = eventService.getEventDataForChart();
 
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalEvents", totalEvents);
+        stats.put("totalCustomers", totalCustomers);
+        stats.put("totalVendors", totalVendors);
+        stats.put("totalPurchasedTickets", totalPurchasedTickets);
+        stats.put("totalOfAvailableTickets", totalOfAvailableTickets);
+        stats.put("eventTicketDetails", eventTicketDetails);
         return ResponseEntity.ok(stats);
     }
 }

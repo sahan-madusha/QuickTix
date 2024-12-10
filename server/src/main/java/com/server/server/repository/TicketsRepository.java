@@ -17,4 +17,6 @@ public interface TicketsRepository extends JpaRepository<Tickets, Integer> {
 
     @Query("SELECT SUM(t.qty) FROM Tickets t ")
     Long sumOfAvailableTickets();
+
+
 }
