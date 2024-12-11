@@ -1,4 +1,4 @@
-# QuickTix - Backend
+# QuickTix
 
 This is the backend for the **QuickTix**, developed using **Spring Boot**. The backend handles user authentication, ticket management, event managment , config managment and logging.
 
@@ -19,7 +19,6 @@ This is the backend for the **QuickTix**, developed using **Spring Boot**. The b
 - **web socket**: real time data tracking
 - **Swagger**: API documentation ans testing
 - **Build Tool**: Maven
-
 - **Frontend Framework**: React.js
 - **State Management**: React Context API
 - **Routing**: React Router
@@ -64,11 +63,5 @@ Before running the backend project, ensure you have the following installed:
    git clone https://github.com/sahan-madusha/QuickTix.git
    cd cli
    ```
-
-
-
-### Explanation of the final README:
-- The **Backend** and **Frontend** sections are combined into one file, clearly outlining the tech stack, 
-   setup instructions, folder structures, and API details for both.
 
 This README should give clear guidance on setting up both the backend and frontend for **QuickTix**! Let me know if you need any further modifications or additions.
