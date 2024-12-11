@@ -103,9 +103,10 @@ public class TicketsController {
     @Operation(summary = "Get all event from user")
     public ResponseEntity<?> getAllPurchasedEventByUserId(@PathVariable Integer id) {
         try {
-            List<Map<String, Object>> tickets = ticketService.userPurchasedTicketsByUserId(id);
+            List<Map<String, Object>> tickets = ticketService.getUserPurchasedTicketsWithDetails(id);
             return ResponseEntity.ok(tickets);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
     }

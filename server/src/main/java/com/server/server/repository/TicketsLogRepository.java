@@ -15,22 +15,22 @@ public interface TicketsLogRepository extends JpaRepository<TicketsLog, Integer>
 
     List<TicketsLog> findByAction(TicketAction action);
 
-    @Query("SELECT" +
-            "    tl.date, " +
-            "    tl.time, " +
-            "    tl.count, " +
-            "    tl.totalAmount, " +
-            "    e.name, " +
-            "    e.location, " +
-            "    e.image, " +
-            "    e.date, " +
-            "    e.time, " +
-            "    e.description, " +
-            "    t.name " +
+    @Query("SELECT " +
+            "e.id AS eventId, " +
+            "e.name AS eventName, " +
+            "e.location AS eventLocation, " +
+            "e.image AS eventImage, " +
+            "e.date AS eventDate, " +
+            "e.time AS eventTime, " +
+            "e.description AS eventDescription, " +
+            "t.id AS ticketId, " +
+            "t.name AS ticketName, " +
+            "tl.count AS ticketCount, " +
+            "tl.totalAmount AS ticketTotalAmount " +
             "FROM TicketsLog tl " +
             "JOIN tl.event e " +
             "JOIN tl.ticket t " +
-            "WHERE tl.user.id = :user_id")
+            "WHERE tl.user.id = :user_id " +
+            "ORDER BY e.id, t.id")
     List<Object[]> userPurchasedTicketsByUserId(@Param("user_id") int user_id);
-
 }
