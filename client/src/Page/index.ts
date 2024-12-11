@@ -1,0 +1,5 @@
+export * from './Home/Home'
+export * from './AuthPage/AuthPage'
+export * from './Loging-success/Loging-success'
+export * from './Dashboard/Dashboard'
+export * from './Book-ticket/BookTicket'
