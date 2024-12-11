@@ -8,7 +8,7 @@ export const BookTicket = () => {
   const [isEventFetch, setIsEventFetch] = useState(1);
   const [selectedEvent, setSelectedEvent] = useState<any>();
   const [selectedEventId, setSelectedEventId] = useState();
-  const { tickets } = useAuthContext();
+  const { tickets ,isEventUpdated } = useAuthContext();
 
   const handleEventClick = async (event) => {
     try {
@@ -32,7 +32,7 @@ export const BookTicket = () => {
 
   useEffect(() => {
     fetchData();
-  }, [selectedEventId, tickets]);
+  }, [selectedEventId, tickets ,isEventUpdated]);
 
   return (
     <>

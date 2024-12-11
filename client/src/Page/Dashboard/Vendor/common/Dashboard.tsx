@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { useAuthContext } from "../../../../Context";
-import { Card, Col, Row, Typography } from "antd";
 import { GetAppStats } from "../../../../Api";
-
-const { Text } = Typography;
+import { ConfigUI } from "../../../../Components";
 
 export const Dashboard = () => {
-  const { limitations } = useAuthContext();
-  const formattedDate = format(new Date(limitations?.lastUpdate), "PPpp");
+  const { limitations, tickets, isEventUpdated } = useAuthContext();
   const [statsList, setStatsList] = useState([
-    { title: "QuickTix", value: 0, bgColor: "bg-blue-500" },
     { title: "Sold tickets", value: 0, bgColor: "bg-green-500" },
     { title: "Available tickets", value: 0, bgColor: "bg-yellow-500" },
     { title: "Events", value: 0, bgColor: "bg-purple-500" },
@@ -19,15 +14,14 @@ export const Dashboard = () => {
   const fetchStatsData = async () => {
     const res = await GetAppStats();
     setStatsList([
-      { title: "QuickTix", value: 0, bgColor: "bg-blue-500" },
       {
         title: "Sold tickets",
-        value: res.totalVendors,
+        value: res.totalPurchasedTickets,
         bgColor: "bg-green-500",
       },
       {
         title: "Available tickets",
-        value: res.totalCustomers,
+        value: res?.totalOfAvailableTickets,
         bgColor: "bg-yellow-500",
       },
       { title: "Events", value: res.totalEvents, bgColor: "bg-purple-500" },
@@ -36,7 +30,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     fetchStatsData();
-  }, []);
+  }, [tickets, isEventUpdated]);
 
   return (
     <>
@@ -54,46 +48,7 @@ export const Dashboard = () => {
             ))}
           </div>
           <div className="mx-1">
-            <Row gutter={[16, 16]}>
-              {/* Vendor Limitation 1 */}
-              <Col span={12}>
-                <Card
-                  title="Vendor Ticket Adding Limitation"
-                  bordered
-                  hoverable
-                  className="shadow-lg"
-                >
-                  <div className="flex flex-col gap-y-2 justify-between items-center">
-                    <Text type="secondary">Last updated: {formattedDate}</Text>
-                    <div>
-                      <Text strong>{limitations?.vendorLimitation}</Text>
-                      <span> Per {limitations?.type}</span>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-
-              {/* Vendor Limitation 2 */}
-              <Col span={12}>
-                <Card
-                  title="Customer Ticket buying Limitation"
-                  bordered
-                  hoverable
-                  className="shadow-lg"
-                >
-                  <div className="flex flex-col gap-y-2 justify-between items-center">
-                    <Text type="secondary">Last updated: {formattedDate}</Text>
-                    <div>
-                      <Text strong>{limitations?.customerLimitation}</Text>
-                      <span className="capitalize">
-                        {" "}
-                        Per {limitations?.type}
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-            </Row>
+            <ConfigUI config={limitations} />
           </div>
         </div>
       </div>

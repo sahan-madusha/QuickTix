@@ -2,8 +2,9 @@ import { jwtDecode } from "jwt-decode";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
-import { WEB_SOCKET_URL } from "../Constant";
+import { systemStatus, WEB_SOCKET_URL } from "../Constant";
 import { fetchConfigData } from "../Api";
+
 interface User {
   userId: any;
   username: string;
@@ -15,8 +16,10 @@ interface Config {
   id: number;
   vendorLimitation: number;
   customerLimitation: number;
-  type: string;
+  status: any;
   lastUpdate: string;
+  totalTicketCount: number;
+  maximumTicketCountEvent: number;
 }
 
 interface AuthContextType {
@@ -27,8 +30,9 @@ interface AuthContextType {
   user: User;
   limitations: Config;
   systemLogs: any;
-  isEventUpdated:any;
-  tickets:any;
+  isEventUpdated: any;
+  tickets: any;
+  isActive:boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -45,9 +49,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   });
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [limitations, setLimitations] = useState<Config>();
+  const [isActive, setIsActive] = useState<boolean>(true);
   const [systemLogs, setSystemLogs] = useState([]);
-  const [isEventUpdated , setEventUpdated] = useState<any>()
-  const [tickets , setTickets] = useState<any>()
+  const [isEventUpdated, setEventUpdated] = useState<any>();
+  const [tickets, setTickets] = useState<any>();
 
   const decodeToken = (token: string) => {
     if (typeof token !== "string" || !token.trim()) {
@@ -68,8 +73,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email: decoded.email || "",
         userRole: decoded.userRole || "",
       });
-
-      console.log(decoded);
     } catch (error) {
       console.error("Failed to decode token:", error);
       setUser({
@@ -92,7 +95,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setAuthToken(null);
     localStorage.removeItem("authToken");
     setUser({
-      userId:"",
+      userId: "",
       username: "",
       email: "",
       userRole: "",
@@ -121,18 +124,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       webSocketFactory: () => new SockJS(WEB_SOCKET_URL),
       onConnect: () => {
         client.subscribe("/topic/configUpdates", (message) => {
-          const updatedConfig = JSON.parse(message.body);
+          const updatedConfig = JSON.parse(message.body);          
           setLimitations(updatedConfig);
+          if (updatedConfig?.status === systemStatus.active) {
+            setIsActive(true);
+          } else {
+            setIsActive(false);
+          }
         });
 
         client.subscribe("/topic/savedEvent", (message) => {
           const savedEvent = JSON.parse(message.body);
-          setEventUpdated(savedEvent)
+          setEventUpdated(savedEvent);
         });
 
         client.subscribe("/topic/updateEvent", (message) => {
           const updateEvent = JSON.parse(message.body);
-          setEventUpdated(updateEvent)
+          setEventUpdated(updateEvent);
         });
 
         client.subscribe("/topic/systemlogs", (message) => {
@@ -144,8 +152,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setTickets(tic);
         });
       },
-      debug: (str) => {
-      },
+      debug: (str) => {},
     });
 
     client.activate();
@@ -153,6 +160,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       client.deactivate();
     };
+
+    
   }, []);
 
   return (
@@ -167,6 +176,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         limitations,
         systemLogs,
         tickets,
+        isActive,
       }}
     >
       {children}
