@@ -20,10 +20,10 @@ export const PurchasedTickets = () => {
     try {
       const res = await userPurchasedTicketsByUserId(user.userId);
       console.log(res);
-      
+
       setSelectedEvent(res);
     } catch (error) {
-      toast.error("somthing went wrong");
+      toast.error("Something went wrong");
     }
   };
 
@@ -42,7 +42,7 @@ export const PurchasedTickets = () => {
             cover={
               <img
                 alt={event.eventName}
-                src={`${IMAGE_URL}/${event.image}`}
+                src={`${IMAGE_URL}/${event.eventImage}`}
                 className="object-cover h-48 w-full"
               />
             }
@@ -51,28 +51,31 @@ export const PurchasedTickets = () => {
               <h2 className="text-xl font-semibold text-gray-800 mb-2">
                 {event.eventName}
               </h2>
-              <p className="text-gray-600 text-sm mb-4">{event.description}</p>
+              <p className="text-gray-600 text-sm mb-4">{event.eventDescription}</p>
               <Divider />
               <div className="space-y-2 mb-4">
                 <div className="flex items-center space-x-2">
                   <Tag icon={<CalendarOutlined />} color="blue">
-                    {event.date}
+                    {event.eventDate}
                   </Tag>
                   <Tag icon={<ClockCircleOutlined />} color="green">
-                    {event.time}
+                    {event.eventTime}
                   </Tag>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Tag icon={<DollarOutlined />} color="gold">
-                    ${event.totalAmount}
-                  </Tag>
-                  <Tag color="cyan">Qty: {event.qty}</Tag>
+                  <div className="flex flex-wrap gap-2">
+                    {event.tickets?.map((ticket: any, ticketIndex: number) => (
+                      <Tag key={ticketIndex} icon={<DollarOutlined />} color="gold">
+                        Rs:{ticket.ticketTotalAmount} - Qty: {ticket.ticketCount}
+                      </Tag>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center mb-4">
                 <EnvironmentOutlined className="mr-2 text-red-500" />
                 <a href="#" className="text-blue-600 hover:underline text-sm">
-                  {event.location}
+                  {event.eventLocation}
                 </a>
               </div>
             </div>
