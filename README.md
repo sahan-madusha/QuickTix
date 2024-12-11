@@ -1,2 +1,0 @@
-# QuickTix
-Ticket booking system
