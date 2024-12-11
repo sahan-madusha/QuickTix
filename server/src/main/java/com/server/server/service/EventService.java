@@ -121,4 +121,22 @@ public class EventService {
         existingEvent.setStatus(eventDto.getStatus());
         return eventRepository.save(existingEvent);
     }
+
+    public List<Map<String, Object>> getEventDataForChart() {
+        List<Object[]> eventTicketDetails = eventRepository.findEventTicketDetails();
+
+        List<Map<String, Object>> formattedDetails = eventTicketDetails.stream()
+                .map(result -> {
+                    Map<String, Object> eventData = new HashMap<>();
+                    eventData.put("name", result[0]);
+                    eventData.put("sales", result[2]);
+                    eventData.put("total", result[1]);
+                    eventData.put("available", result[3]);
+                    return eventData;
+                })
+                .collect(Collectors.toList());
+
+        return formattedDetails;
+    }
+
 }

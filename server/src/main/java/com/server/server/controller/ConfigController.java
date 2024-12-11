@@ -14,11 +14,15 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/config")
 @Tag(name = "Config", description = "Endpoints for app config")
 public class ConfigController {
+
+    private static final Logger logger = Logger.getLogger(ConfigController.class.getName());
 
     private final ConfigService configService;
     private final SimpMessagingTemplate messagingTemplate;
@@ -36,6 +40,9 @@ public class ConfigController {
     @PostMapping("/update")
     @Operation(summary = "Update configuration data")
     public ResponseEntity<?> updateConfig(@RequestBody ConfigDto configDto) {
+
+        logger.info("Received request to update configuration => "+ configDto);
+
         User adminUser = userRepository.findByUsername("admin").get();
 
         try {
@@ -44,15 +51,20 @@ public class ConfigController {
 
             existingConfig.setVendorLimitation(configDto.getVendorLimitation());
             existingConfig.setCustomerLimitation(configDto.getCustomerLimitation());
-            existingConfig.setType(configDto.getType());
+            existingConfig.setStatus(configDto.getStatus());
+            existingConfig.setTotalTicketCount(configDto.getTotalTicketCount());
+            existingConfig.setMaximumTicketCountEvent(configDto.getMaximumTicketCountEvent());
             existingConfig.setLastUpdate(LocalDateTime.now());
 
             Config updatedConfig = configService.updateConfig(existingConfig);
-            systemLogsService.save("Update configuration data => Vendor limitation : " + configDto.getVendorLimitation() +"Customer limitation :"+configDto.getCustomerLimitation() + "Type :"+configDto.getType(), adminUser , "1");
 
+            logger.info("Update configuration data => : " + configDto +" : "+ adminUser);
+            systemLogsService.save("Update configuration data => : " + configDto , adminUser , "1");
             messagingTemplate.convertAndSend("/topic/configUpdates", updatedConfig);
+
             return ResponseEntity.ok(new MessageResponse( "Config successfully"));
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Update configuration data => Internal server error ", adminUser);
             systemLogsService.save("Update configuration data => Internal server error ", adminUser , "0");
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
@@ -64,8 +76,10 @@ public class ConfigController {
     public ResponseEntity<?> getConfig(@PathVariable int id) {
         try{
             Config config = configService.getConfig(id);
+            logger.info("Update configuration data");
             return ResponseEntity.ok(config);
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error updating configuration", e);
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
     }

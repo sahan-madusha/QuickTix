@@ -1,6 +1,5 @@
 package com.server.server.dto;
 
-import com.server.server.enums.TicketLimitationType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -9,6 +8,8 @@ import java.time.LocalDateTime;
 public class ConfigDto {
     private int vendorLimitation;
     private int customerLimitation;
-    private TicketLimitationType type;
+    private String status;
     private LocalDateTime lastUpdate;
+    private int totalTicketCount;
+    private int maximumTicketCountEvent;
 }
