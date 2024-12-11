@@ -64,10 +64,4 @@ Before running the backend project, ensure you have the following installed:
    cd cli
    ```
 
-
-
-### Explanation of the final README:
-- The **Backend** and **Frontend** sections are combined into one file, clearly outlining the tech stack, 
-   setup instructions, folder structures, and API details for both.
-
 This README should give clear guidance on setting up both the backend and frontend for **QuickTix**! Let me know if you need any further modifications or additions.
