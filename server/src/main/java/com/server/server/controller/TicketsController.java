@@ -24,11 +24,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/ticket")
 @Tag(name = "Ticket", description = "Endpoints for ticket")
 public class TicketsController {
+
+    private static final Logger logger = Logger.getLogger(ConfigController.class.getName());
 
     private final TicketService ticketService;
     private final UserRepository userRepository;
@@ -57,6 +61,9 @@ public class TicketsController {
     @PostMapping("/add")
     @Operation(summary = "add ticket data")
     public ResponseEntity<?> addTickets(@RequestBody TicketsDto ticketsDto) {
+
+        logger.info("Received request to add or update a ticket");
+
         User eventUser = userRepository.findById(ticketsDto.getUserId()).get();
         boolean ticketIsExists = doesTicketExist(ticketsDto);
         Config config = configRepository.findById(1).get();
@@ -65,6 +72,7 @@ public class TicketsController {
         long currentTicketCountForVendor = ticketsRepository.sumOfTicketsForVendorAndTicket(ticketsDto.getUserId() , ticketsDto.getEventId());
         long qtyOfTicket = ticketsRepository.qtyOfTicket(ticketsDto.getId());
         if (currentTicketCountForVendor + ticketsDto.getQty()-qtyOfTicket > config.getVendorLimitation()) {
+            logger.warning("Your ticket adding limit is exceeded" + " : => " + ticketsDto);
             systemLogsService.save("Your ticket adding limit is exceeded" + " : => " + ticketsDto, eventUser, "0");
             return ResponseEntity.ok(new MessageResponse("You ticket limit is exceeded."));
         }
@@ -72,6 +80,7 @@ public class TicketsController {
         //Maximum Tickets count for event
         Long sumOfAvailableTicketsInEvent = ticketsRepository.sumOfAvailableTicketsInEvent(ticketsDto.getEventId());
         if (sumOfAvailableTicketsInEvent + ticketsDto.getQty()-qtyOfTicket > config.getMaximumTicketCountEvent()) {
+            logger.warning("System ticket limit is exceeded" + " : => " + ticketsDto);
             systemLogsService.save("System ticket limit is exceeded" + " : => " + ticketsDto, eventUser, "0");
             return ResponseEntity.ok(new MessageResponse("System ticket limit is exceeded."));
         }
@@ -79,6 +88,7 @@ public class TicketsController {
         //Maximum Tickets count for system
         Long sumOfAvailableTicketsInSystem = ticketsRepository.sumOfAvailableTicketsInSystem();
         if (sumOfAvailableTicketsInSystem + ticketsDto.getQty()-qtyOfTicket > config.getTotalTicketCount()) {
+            logger.warning("System ticket limit is exceeded" + " : => " + ticketsDto);
             systemLogsService.save("System ticket limit is exceeded" + " : => " + ticketsDto, eventUser, "0");
             return ResponseEntity.ok(new MessageResponse("System ticket limit is exceeded."));
         }
@@ -89,11 +99,12 @@ public class TicketsController {
             if (ticketIsExists) {
                 msg = "Ticket Updated successfully";
             }
+            logger.info(msg);
             systemLogsService.save(msg + " : => " + ticketsDto, eventUser, "1");
             messagingTemplate.convertAndSend("/topic/tickets", ticketsDto);
             return ResponseEntity.ok(new MessageResponse(msg));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.info("Add new ticket : Internal server error : => "+ticketsDto);
             systemLogsService.save("Add new ticket : Internal server error : => "+ticketsDto, eventUser, "0");
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
@@ -103,11 +114,15 @@ public class TicketsController {
     @PostMapping("/purchase")
     @Operation(summary = "Purchase ticket")
     public ResponseEntity<?> purchaseTickets(@RequestBody TicketsDto ticketsDto) {
+
+        logger.info("Received request to purchase a ticket");
+
         Optional<Tickets> optionalTicket = ticketsRepository.findById(ticketsDto.getId());
         User eventUser = userRepository.findById(ticketsDto.getUserId()).get();
         Config config = configRepository.findById(1).get();
 
         if (!optionalTicket.isPresent()) {
+            logger.warning("Ticket not found : Internal server error : => "+ticketsDto);
             systemLogsService.save("Ticket not found : Internal server error : => "+ticketsDto, eventUser, "0");
             return ResponseEntity.status(404).body(new MessageResponse("Ticket not found"));
         }
@@ -120,6 +135,7 @@ public class TicketsController {
                 ticketsDto.getEventId());
 
         if (sumOfTicketsForCustomerAndTicket + ticketsDto.getQty() > config.getCustomerLimitation()) {
+            logger.warning("Your ticket purchasing limit is exceeded : => "+ticketsDto);
             systemLogsService.save("Your ticket purchasing limit is exceeded : => "+ticketsDto, eventUser, "0");
             return ResponseEntity.badRequest().body(new MessageResponse("Your ticket purchasing limit is exceeded"));
         }
@@ -128,7 +144,9 @@ public class TicketsController {
 
         try {
             ticketService.executeTicketOperation(ticketsDto,"purchase");
+
             messagingTemplate.convertAndSend("/topic/tickets", ticketsDto);
+            logger.info("Ticket purchased successfully: " + ticketsDto);
             systemLogsService.save("Ticket purchased successfully: " + ticketsDto, eventUser, "1");
             return ResponseEntity.ok(new MessageResponse("Ticket purchased successfully"));
         } catch (Exception e) {
@@ -142,9 +160,10 @@ public class TicketsController {
     public ResponseEntity<?> getAllPurchasedEventByUserId(@PathVariable Integer id) {
         try {
             List<Map<String, Object>> tickets = ticketService.getUserPurchasedTicketsWithDetails(id);
+            logger.info("Fetched tickets for user ID: " + id);
             return ResponseEntity.ok(tickets);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Error fetching tickets for user ID: " + id, e);
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
     }

@@ -15,12 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/stats")
 @Tag(name = "Stats", description = "Endpoints for system stats")
 
 public class StatsController {
+
+    private static final Logger logger = Logger.getLogger(ConfigController.class.getName());
+
     @Autowired
     private EventService eventService;
 
@@ -33,6 +37,7 @@ public class StatsController {
     @GetMapping
     @Operation(summary = "Fetch a admin dashboard stats")
     public ResponseEntity<Map<String, Object>> getStats() {
+
         long totalEvents = eventService.getTotalEventCount();
         long totalVendors = userService.getTotalVendorCount();
         long totalCustomers = userService.getTotalCustomerCount();
@@ -47,6 +52,9 @@ public class StatsController {
         stats.put("totalPurchasedTickets", totalPurchasedTickets);
         stats.put("totalOfAvailableTickets", totalOfAvailableTickets);
         stats.put("eventTicketDetails", eventTicketDetails);
+
+        logger.info("Fetch a admin dashboard stats");
+
         return ResponseEntity.ok(stats);
     }
 }

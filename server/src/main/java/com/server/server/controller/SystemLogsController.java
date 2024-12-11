@@ -14,12 +14,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/getsystemlogs")
 @Tag(name = "System logs", description = "Endpoints for system log")
 
 public class SystemLogsController {
+
+    private static final Logger logger = Logger.getLogger(ConfigController.class.getName());
 
     @Autowired
     private SystemLogsService systemLogsService;
@@ -39,6 +42,9 @@ public class SystemLogsController {
             logData.put("status", log.getStatus());
             formattedData.add(logData);
         }
+
+        logger.info("Fetch a system logs");
+
         return ResponseEntity.ok(formattedData);
     }
 }
