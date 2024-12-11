@@ -1,32 +1,30 @@
-package Model;
+package org.example;
 
 import java.io.Serializable;
 
-public class Configuration implements Serializable {
+public class Config implements Serializable {
 
-
-    private int maxTicketCapacity;
     private int totalTickets;
-
-    public Configuration() {
-    }
-
     private int ticketReleaseRate;
     private int customerRetrievalRate;
+    private int maxTicketCapacity;
 
-    public Configuration(int maxTicketCapacity, int totalTickets, int ticketReleaseRate, int customerRetrievalRate) {
-        this.maxTicketCapacity = maxTicketCapacity;
+    public Config() {
+    }
+
+    public Config(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketCapacity) {
         this.totalTickets = totalTickets;
         this.ticketReleaseRate = ticketReleaseRate;
         this.customerRetrievalRate = customerRetrievalRate;
+        this.maxTicketCapacity = maxTicketCapacity;
     }
 
-    public int getCustomerRetrievalRate() {
-        return customerRetrievalRate;
+    public int getTotalTickets() {
+        return totalTickets;
     }
 
-    public void setCustomerRetrievalRate(int customerRetrievalRate) {
-        this.customerRetrievalRate = customerRetrievalRate;
+    public void setTotalTickets(int totalTickets) {
+        this.totalTickets = totalTickets;
     }
 
     public int getTicketReleaseRate() {
@@ -37,12 +35,12 @@ public class Configuration implements Serializable {
         this.ticketReleaseRate = ticketReleaseRate;
     }
 
-    public int getTotalTickets() {
-        return totalTickets;
+    public int getCustomerRetrievalRate() {
+        return customerRetrievalRate;
     }
 
-    public void setTotalTickets(int totalTickets) {
-        this.totalTickets = totalTickets;
+    public void setCustomerRetrievalRate(int customerRetrievalRate) {
+        this.customerRetrievalRate = customerRetrievalRate;
     }
 
     public int getMaxTicketCapacity() {
