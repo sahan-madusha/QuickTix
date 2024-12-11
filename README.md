@@ -1,4 +1,4 @@
-# QuickTix - Backend
+# QuickTix
 
 This is the backend for the **QuickTix**, developed using **Spring Boot**. The backend handles user authentication, ticket management, event managment , config managment and logging.
 
@@ -19,7 +19,6 @@ This is the backend for the **QuickTix**, developed using **Spring Boot**. The b
 - **web socket**: real time data tracking
 - **Swagger**: API documentation ans testing
 - **Build Tool**: Maven
-
 - **Frontend Framework**: React.js
 - **State Management**: React Context API
 - **Routing**: React Router
