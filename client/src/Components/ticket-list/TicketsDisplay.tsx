@@ -56,6 +56,7 @@ export const TicketsDisplay = ({
       id: ticketId,
       userId: user.userId,
       qty: ticketQty,
+      eventId:selectedEvent.id
     };
 
     try {

@@ -57,12 +57,12 @@ export const AppConfig = () => {
               </Form.Item>
 
               <Form.Item
-                label="Maximum Tickets for Vendors"
+                label="Maximum number of tickets that can be added to an event for a vendor"
                 name="vendorLimitation"
                 rules={[
                   {
                     required: true,
-                    message: "Please enter maximum tickets for vendors",
+                    message: "Please enter Maximum number of tickets that can be added to an event for a vendor",
                   },
                 ]}
               >
@@ -74,12 +74,12 @@ export const AppConfig = () => {
               </Form.Item>
 
               <Form.Item
-                label="Maximum Tickets for Customers"
+                label="Maximum number of tickets that can be purchased to an event for a customer"
                 name="customerLimitation"
                 rules={[
                   {
                     required: true,
-                    message: "Please enter maximum tickets for customers",
+                    message: "Please enter Maximum number of tickets that can be purchased to an event for a customer",
                   },
                 ]}
               >

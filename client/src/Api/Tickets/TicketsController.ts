@@ -44,7 +44,5 @@ export const userPurchasedTicketsByUserId = async (id: any) => {
   } catch (error: any) {
     const errorMessage =
       error.response?.data?.message ||
-      "Something went wrong. Please try again.";
-    toast.error(errorMessage);
-  }
+      "Something went wrong. Please try again.";  }
 };

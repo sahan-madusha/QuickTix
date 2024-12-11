@@ -73,8 +73,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email: decoded.email || "",
         userRole: decoded.userRole || "",
       });
-
-      console.log(decoded);
     } catch (error) {
       console.error("Failed to decode token:", error);
       setUser({
@@ -126,7 +124,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       webSocketFactory: () => new SockJS(WEB_SOCKET_URL),
       onConnect: () => {
         client.subscribe("/topic/configUpdates", (message) => {
-          const updatedConfig = JSON.parse(message.body);
+          const updatedConfig = JSON.parse(message.body);          
           setLimitations(updatedConfig);
           if (updatedConfig?.status === systemStatus.active) {
             setIsActive(true);
@@ -162,6 +160,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       client.deactivate();
     };
+
+    
   }, []);
 
   return (
