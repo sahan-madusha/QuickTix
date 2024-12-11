@@ -18,5 +18,18 @@ public interface TicketsRepository extends JpaRepository<Tickets, Integer> {
     @Query("SELECT SUM(t.qty) FROM Tickets t ")
     Long sumOfAvailableTickets();
 
+    @Query("SELECT SUM(t.qty) FROM Tickets t " +
+            "JOIN t.event e " +
+            "WHERE e.user.id = :vendorId AND e.id = :eventId")
+    Long sumOfTicketsForVendorAndTicket(@Param("vendorId") Integer vendorId, @Param("eventId") Integer eventId);
+
+    @Query("SELECT SUM(t.qty) FROM Tickets t WHERE t.id = :ticketId")
+    Long qtyOfTicket(@Param("ticketId") Integer ticketId);
+
+    @Query("SELECT SUM(t.qty) FROM Tickets t WHERE t.event.id = :eventId ")
+    Long sumOfAvailableTicketsInEvent(@Param("eventId") Integer eventId);
+
+    @Query("SELECT SUM(t.qty) FROM Tickets t ")
+    Long sumOfAvailableTicketsInSystem();
 
 }

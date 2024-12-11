@@ -3,8 +3,13 @@ package com.server.server.controller;
 import com.server.server.dto.EventDto;
 import com.server.server.dto.TicketsDto;
 
+import com.server.server.entity.Config;
 import com.server.server.entity.Tickets;
+import com.server.server.entity.TicketsLog;
 import com.server.server.entity.User;
+import com.server.server.enums.TicketAction;
+import com.server.server.repository.ConfigRepository;
+import com.server.server.repository.TicketsLogRepository;
 import com.server.server.repository.TicketsRepository;
 import com.server.server.repository.UserRepository;
 import com.server.server.service.SystemLogsService;
@@ -30,13 +35,18 @@ public class TicketsController {
     private final SystemLogsService systemLogsService;
     private final TicketsRepository ticketsRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ConfigRepository configRepository;
+    private final TicketsLogRepository ticketsLogRepository;
 
-    public TicketsController(TicketService ticketService, UserRepository userRepository, SystemLogsService systemLogsService, TicketsRepository ticketsRepository, SimpMessagingTemplate messagingTemplate) {
+
+    public TicketsController(TicketService ticketService, UserRepository userRepository, SystemLogsService systemLogsService, TicketsRepository ticketsRepository, SimpMessagingTemplate messagingTemplate, ConfigRepository configRepository, TicketsLogRepository ticketsLogRepository) {
         this.ticketService = ticketService;
         this.userRepository = userRepository;
         this.systemLogsService = systemLogsService;
         this.ticketsRepository = ticketsRepository;
         this.messagingTemplate = messagingTemplate;
+        this.configRepository = configRepository;
+        this.ticketsLogRepository = ticketsLogRepository;
     }
 
     public boolean doesTicketExist(TicketsDto ticketsDto) {
@@ -49,11 +59,33 @@ public class TicketsController {
     public ResponseEntity<?> addTickets(@RequestBody TicketsDto ticketsDto) {
         User eventUser = userRepository.findById(ticketsDto.getUserId()).get();
         boolean ticketIsExists = doesTicketExist(ticketsDto);
+        Config config = configRepository.findById(1).get();
+
+        //Maximum number of tickets that can be added to an event for a vendor
+        long currentTicketCountForVendor = ticketsRepository.sumOfTicketsForVendorAndTicket(ticketsDto.getUserId() , ticketsDto.getEventId());
+        long qtyOfTicket = ticketsRepository.qtyOfTicket(ticketsDto.getId());
+        if (currentTicketCountForVendor + ticketsDto.getQty()-qtyOfTicket > config.getVendorLimitation()) {
+            systemLogsService.save("Your ticket adding limit is exceeded" + " : => " + ticketsDto, eventUser, "0");
+            return ResponseEntity.ok(new MessageResponse("You ticket limit is exceeded."));
+        }
+
+        //Maximum Tickets count for event
+        Long sumOfAvailableTicketsInEvent = ticketsRepository.sumOfAvailableTicketsInEvent(ticketsDto.getEventId());
+        if (sumOfAvailableTicketsInEvent + ticketsDto.getQty()-qtyOfTicket > config.getMaximumTicketCountEvent()) {
+            systemLogsService.save("System ticket limit is exceeded" + " : => " + ticketsDto, eventUser, "0");
+            return ResponseEntity.ok(new MessageResponse("System ticket limit is exceeded."));
+        }
+
+        //Maximum Tickets count for system
+        Long sumOfAvailableTicketsInSystem = ticketsRepository.sumOfAvailableTicketsInSystem();
+        if (sumOfAvailableTicketsInSystem + ticketsDto.getQty()-qtyOfTicket > config.getTotalTicketCount()) {
+            systemLogsService.save("System ticket limit is exceeded" + " : => " + ticketsDto, eventUser, "0");
+            return ResponseEntity.ok(new MessageResponse("System ticket limit is exceeded."));
+        }
 
         try {
-            ticketService.executeTicketOperation(ticketsDto , "add_or_update");
             String msg = "Ticket Added successfully";
-
+            ticketService.executeTicketOperation(ticketsDto , "add_or_update");
             if (ticketIsExists) {
                 msg = "Ticket Updated successfully";
             }
@@ -73,6 +105,7 @@ public class TicketsController {
     public ResponseEntity<?> purchaseTickets(@RequestBody TicketsDto ticketsDto) {
         Optional<Tickets> optionalTicket = ticketsRepository.findById(ticketsDto.getId());
         User eventUser = userRepository.findById(ticketsDto.getUserId()).get();
+        Config config = configRepository.findById(1).get();
 
         if (!optionalTicket.isPresent()) {
             systemLogsService.save("Ticket not found : Internal server error : => "+ticketsDto, eventUser, "0");
@@ -81,9 +114,14 @@ public class TicketsController {
 
         Tickets ticket = optionalTicket.get();
 
-        if (ticket.getQty() < ticketsDto.getQty()) {
-            systemLogsService.save("Insufficient ticket quantity : Internal server error : => "+ticketsDto, eventUser, "0");
-            return ResponseEntity.badRequest().body(new MessageResponse("Insufficient ticket quantity"));
+        //Maximum number of tickets that can be purchased to an event for a customer
+        Long sumOfTicketsForCustomerAndTicket = ticketsLogRepository.sumOfTicketsForCustomerAndEvent(
+                ticketsDto.getUserId(),
+                ticketsDto.getEventId());
+
+        if (sumOfTicketsForCustomerAndTicket + ticketsDto.getQty() > config.getCustomerLimitation()) {
+            systemLogsService.save("Your ticket purchasing limit is exceeded : => "+ticketsDto, eventUser, "0");
+            return ResponseEntity.badRequest().body(new MessageResponse("Your ticket purchasing limit is exceeded"));
         }
 
         ticket.setQty(ticket.getQty() - ticketsDto.getQty());
@@ -110,6 +148,4 @@ public class TicketsController {
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
     }
-
-
 }

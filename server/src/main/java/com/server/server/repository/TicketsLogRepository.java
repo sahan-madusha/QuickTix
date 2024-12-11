@@ -33,4 +33,9 @@ public interface TicketsLogRepository extends JpaRepository<TicketsLog, Integer>
             "WHERE tl.user.id = :user_id " +
             "ORDER BY e.id, t.id")
     List<Object[]> userPurchasedTicketsByUserId(@Param("user_id") int user_id);
+
+    @Query("SELECT SUM(tl.count) FROM TicketsLog tl " +
+            "WHERE tl.event.id = :eventId AND tl.user.id = :customerId")
+    Long sumOfTicketsForCustomerAndEvent(@Param("customerId") Integer customerId,
+                                         @Param("eventId") Integer eventId);
 }
