@@ -2,7 +2,7 @@ import { Button } from "antd";
 import React, { useState } from "react";
 import { DashboardOutlined } from "@ant-design/icons";
 import { UserUiEnum } from "../../../Constant";
-import { Dashboard, MyItem } from "./common";
+import { Dashboard } from "./common";
 
 export const CustomerDashboard = () => {
   const [selectedNav, setSelectedNav] = useState(UserUiEnum.dashboard);
@@ -29,23 +29,6 @@ export const CustomerDashboard = () => {
                 <span className="text-xs">Dashboard</span>
               </div>
             </Button>
-            <Button
-              className={`border-1 mx-2 border-blue-500  p-12 ${
-                selectedNav === UserUiEnum.myitem
-                  ? `bg-blue-950 text-white`
-                  : `text-blue-500`
-              } `}
-              onClick={() => {
-                setSelectedNav(UserUiEnum.myitem);
-              }}
-            >
-              <div>
-                <div>
-                  <DashboardOutlined className="text-lg" />
-                </div>
-                <span className="text-xs">My Items</span>
-              </div>
-            </Button>
           </div>
         </div>
         <div className="w-full md:w-11/12">
@@ -53,11 +36,6 @@ export const CustomerDashboard = () => {
             {selectedNav === UserUiEnum.dashboard && (
               <>
                 <Dashboard />
-              </>
-            )}
-            {selectedNav === UserUiEnum.myitem && (
-              <>
-                <MyItem />
               </>
             )}
           </div>

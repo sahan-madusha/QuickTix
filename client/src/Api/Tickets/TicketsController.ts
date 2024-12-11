@@ -36,3 +36,15 @@ export const TicketPurchase  = async (data: any) => {
     toast.error(errorMessage);
   }
 };
+
+export const userPurchasedTicketsByUserId = async (id: any) => {
+  try {
+    const response = await axios.get(`${SERVER_API}/ticket/list-ticket-user/${id}`);
+    return response.data;
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data?.message ||
+      "Something went wrong. Please try again.";
+    toast.error(errorMessage);
+  }
+};
