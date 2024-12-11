@@ -42,7 +42,8 @@ public class SecurityConfig {
                                 "/api/getsystemlogs",
                                 "/api/stats",
                                 "/api/ticket/add",
-                                "api/ticket/purchase").permitAll()
+                                "api/ticket/purchase",
+                                "api/ticket/list-ticket-user/{id}").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

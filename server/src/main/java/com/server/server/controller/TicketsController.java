@@ -14,11 +14,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -96,6 +95,17 @@ public class TicketsController {
             return ResponseEntity.ok(new MessageResponse("Ticket purchased successfully"));
         } catch (Exception e) {
             systemLogsService.save("Purchase ticket: Internal server error: : => "+ticketsDto, eventUser, "0");
+            return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
+        }
+    }
+
+    @GetMapping("/list-ticket-user/{id}")
+    @Operation(summary = "Get all event from user")
+    public ResponseEntity<?> getAllPurchasedEventByUserId(@PathVariable Integer id) {
+        try {
+            List<Map<String, Object>> tickets = ticketService.userPurchasedTicketsByUserId(id);
+            return ResponseEntity.ok(tickets);
+        } catch (Exception e) {
             return ResponseEntity.status(500).body(new MessageResponse("Internal server error"));
         }
     }

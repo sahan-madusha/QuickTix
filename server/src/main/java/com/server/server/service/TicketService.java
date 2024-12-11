@@ -9,7 +9,10 @@ import com.server.server.repository.TicketsRepository;
 import com.server.server.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TicketService {
@@ -43,5 +46,27 @@ public class TicketService {
 
     public Long getTotalOfAvailableTickets() {
         return ticketsRepository.sumOfAvailableTickets();
+    }
+
+    public List<Map<String, Object>> userPurchasedTicketsByUserId(int userId) {
+        List<Object[]> rawData = ticketsLogRepository.userPurchasedTicketsByUserId(userId);
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (Object[] record : rawData) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("date", record[0]);
+            map.put("time", record[1]);
+            map.put("qty", record[2]);
+            map.put("totalAmount", record[3]);
+            map.put("eventName", record[4]);
+            map.put("location", record[5]);
+            map.put("image", record[6]);
+            map.put("eventDate", record[7]);
+            map.put("eventTime", record[8]);
+            map.put("description", record[9]);
+            map.put("ticket", record[10]);
+            result.add(map);
+        }
+        return result;
     }
 }
